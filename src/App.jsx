@@ -36,7 +36,7 @@ export default function App() {
   useEffect(() => {
     if (!toast) return;
     if (toastTimer.current) clearTimeout(toastTimer.current);
-    const ms = toast.type === "error" ? 5000 : 3400;
+    const ms = toast.type === "error" ? 3800 : 2600;
     toastTimer.current = setTimeout(() => dispatch(clearToast()), ms);
     return () => {
       if (toastTimer.current) clearTimeout(toastTimer.current);
