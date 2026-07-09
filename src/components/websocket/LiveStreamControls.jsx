@@ -56,20 +56,13 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
     const cs = Array.isArray(cfg.cities) ? cfg.cities : [];
     const cos = Array.isArray(cfg.countries) ? cfg.countries : [];
 
-    // Default: 1 query + 1 city + primary country so Target / Hits / Hours caps
-    // control search size. Selecting ALL queries×cities makes searching ignore
-    // the spirit of caps (hundreds of LinkedIn calls). Use "Select All" if needed.
+    // Default: 1 query; city & country OPTIONAL (empty = global search).
+    // User selects city/country only when they want geo filters.
     setSelectedQueries(qs.length ? [qs[0]] : []);
-    setSelectedCitiesList(cs.length ? [cs[0]] : []);
-    const primary = (cfg.country || "").trim();
-    if (primary && cos.some((c) => c.toLowerCase() === primary.toLowerCase())) {
-      const match = cos.find((c) => c.toLowerCase() === primary.toLowerCase());
-      setSelectedCountries(match ? [match] : cos.length ? [cos[0]] : []);
-    } else if (cos.length) {
-      setSelectedCountries([cos[0]]);
-    } else {
-      setSelectedCountries(primary ? [primary] : []);
-    }
+    setSelectedCitiesList([]);
+    setSelectedCountries([]);
+    void cs;
+    void cos;
 
     setTarget(cfg.target != null ? String(cfg.target) : "20");
     setResultsPer(cfg.results_per != null ? String(cfg.results_per) : "10");
@@ -204,31 +197,20 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
       countriesList.push(customCountry.trim());
     }
 
-    // Fall back to full config lists if user cleared everything
+    // Queries: fall back to config if none selected.
+    // City & country: OPTIONAL — only what user picked; empty = global search.
     const finalQueries =
       queriesList.length > 0
         ? queriesList
         : searchQueries.length
-          ? [...searchQueries]
+          ? [searchQueries[0]]
           : [];
-    const finalCities =
-      citiesList.length > 0 ? citiesList : cities.length ? [...cities] : [];
-    const finalCountries =
-      countriesList.length > 0
-        ? countriesList
-        : countries.length
-          ? [...countries]
-          : config?.country
-            ? [config.country]
-            : [];
+    const finalCities = citiesList;
+    const finalCountries = countriesList;
 
-    if (
-      finalQueries.length === 0 &&
-      finalCities.length === 0 &&
-      finalCountries.length === 0
-    ) {
+    if (finalQueries.length === 0) {
       alert(
-        "No stream parameters available. Load config from the database or select at least one query, city, or country."
+        "Select at least one search query (city and country are optional — leave empty for global search)."
       );
       return;
     }
@@ -258,12 +240,25 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
       168
     );
 
-    const comboCount = Math.max(1, finalQueries.length * finalCities.length);
+    const locationSlots = Math.max(
+      1,
+      finalCities.length || finalCountries.length || 1
+    );
+    const comboCount = Math.max(1, finalQueries.length * locationSlots);
+    const geoLabel =
+      finalCities.length && finalCountries.length
+        ? `cities [${finalCities.join(", ")}] + countries [${finalCountries.join(", ")}]`
+        : finalCities.length
+          ? `cities [${finalCities.join(", ")}]`
+          : finalCountries.length
+            ? `countries [${finalCountries.join(", ")}]`
+            : "GLOBAL (no city/country filter)";
+
     if (comboCount > 30) {
       const ok = window.confirm(
-        `You selected ${finalQueries.length} queries × ${finalCities.length} cities = ${comboCount} search combos.\n\n` +
-          `Caps: target≤${strictTarget}, hits/query≤${strictResultsPer}, hours_old=${strictHoursOld}.\n` +
-          `Backend will still hard-stop at the target / attempt caps, but this can take a long time.\n\n` +
+        `You selected ${finalQueries.length} queries × ${locationSlots} location(s) = ${comboCount} combos.\n` +
+          `Geo: ${geoLabel}\n\n` +
+          `Caps: target≤${strictTarget}, hits/query≤${strictResultsPer}, hours_old=${strictHoursOld}.\n\n` +
           `Continue with this large selection?`
       );
       if (!ok) return;
@@ -290,6 +285,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
 
     onStartStream({
       search: finalQueries.join(","),
+      // Empty string = global (backend must not substitute Hyderabad/India)
       city: finalCities.join(","),
       countries: finalCountries.join(","),
       category: "all",
@@ -298,13 +294,12 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
       hours_old: strictHoursOld,
       min_exp: strictMinExp,
       max_exp: strictMaxExp,
-      // Each run creates MongoDB collection live_stream_{timestamp}
       collection_name: "live_stream",
-      // extras for logging / future API use
       from_config: !userTouchedRef.current,
       config_country: config?.country || null,
       strict_caps: true,
       combo_count: comboCount,
+      geo_label: geoLabel,
     });
   };
 
@@ -457,7 +452,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
             <span className={sectionLabel}>
               Cities{" "}
               <span className="font-normal normal-case text-slate-400">
-                ({selectedCitiesList.length}/{cities.length} from DB)
+                optional · empty = global · ({selectedCitiesList.length}/{cities.length})
               </span>
             </span>
             <button
@@ -537,8 +532,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
             <span className={sectionLabel}>
               Countries{" "}
               <span className="font-normal normal-case text-slate-400">
-                ({selectedCountries.length}/{countries.length}
-                {config?.country ? ` · default: ${config.country}` : ""})
+                optional · empty = global · ({selectedCountries.length}/{countries.length})
               </span>
             </span>
             <button
@@ -668,13 +662,11 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
               {selectedQueries.length || 0} queries × {selectedCitiesList.length || 0}{" "}
               cities
             </span>{" "}
-            = search combos.{" "}
+            = search combos. City & country optional (none selected → global).{" "}
             <span className="font-semibold text-indigo-600/80 dark:text-indigo-400/90">
               Target
             </span>{" "}
-            is the hard job limit. Hits/Query is preferred batch size — backend auto-raises
-            it when needed so Target is reachable (e.g. Target 20 + Hits 5 + 1 city →
-            requests 20).
+            is the hard job limit; Hits/Query auto-scales to fill it.
           </p>
           <div className="grid grid-cols-3 gap-2">
             <div>

@@ -52,7 +52,7 @@ export default function WebsocketLivePage() {
 
         if (scrapeParams) {
           log(
-            `Scrape request (strict caps): query="${scrapeParams.search || "All"}", city="${scrapeParams.city || "All"}", target≤${scrapeParams.target}, results/q≤${scrapeParams.results_per}, hours=${scrapeParams.hours_old} → new collection ${scrapeParams.collection_name || "live_stream"}_{timestamp}`,
+            `Scrape request (strict caps): query="${scrapeParams.search || "—"}", geo=${scrapeParams.geo_label || (scrapeParams.city || scrapeParams.countries ? `city="${scrapeParams.city || "—"}" country="${scrapeParams.countries || "—"}"` : "GLOBAL")}, target≤${scrapeParams.target}, results/q≤${scrapeParams.results_per}, hours=${scrapeParams.hours_old} → new collection ${scrapeParams.collection_name || "live_stream"}_{timestamp}`,
             "system"
           );
           notifyInfo(
@@ -207,6 +207,7 @@ export default function WebsocketLivePage() {
     max_exp,
     countries,
     collection_name,
+    geo_label,
   }) => {
     setStreamedJobs([]);
     setActiveSession(true);
@@ -224,6 +225,7 @@ export default function WebsocketLivePage() {
       max_exp,
       countries,
       collection_name: collection_name || "live_stream",
+      geo_label,
     });
   };
 
