@@ -668,15 +668,20 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
               {selectedQueries.length || 0} queries × {selectedCitiesList.length || 0}{" "}
               cities
             </span>{" "}
-            = search combos. Defaults start with 1×1 so caps stay tight — use Select All
-            only if you want a wide crawl.
+            = search combos.{" "}
+            <span className="font-semibold text-indigo-600/80 dark:text-indigo-400/90">
+              Target
+            </span>{" "}
+            is the hard job limit. Hits/Query is preferred batch size — backend auto-raises
+            it when needed so Target is reachable (e.g. Target 20 + Hits 5 + 1 city →
+            requests 20).
           </p>
           <div className="grid grid-cols-3 gap-2">
             <div>
               <label
                 htmlFor="ws-target"
                 className="mb-1 block text-[10px] font-semibold text-slate-400 dark:text-slate-500"
-                title="Hard cap — stream stops after this many unique jobs"
+                title="Hard stop — stream ends after this many unique saved jobs"
               >
                 Target Cap
               </label>
@@ -700,7 +705,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
               <label
                 htmlFor="ws-results"
                 className="mb-1 block text-[10px] font-semibold text-slate-400 dark:text-slate-500"
-                title="Hard cap — max LinkedIn results requested per query×city call"
+                title="Preferred batch size per query×city. Auto-scaled up to fill Target when few combos remain."
               >
                 Hits/Query
               </label>
