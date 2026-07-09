@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAppDispatch } from "../store/hooks";
 import { notifyError, notifySuccess, notifyInfo } from "../store/notify";
 import { fetchConfig } from "../store/slices/configSlice";
+import { getWsUrl } from "../store/api";
 import LiveStreamControls from "../components/websocket/LiveStreamControls";
 import ProgressBar from "../components/websocket/ProgressBar";
 import LogsTerminal from "../components/websocket/LogsTerminal";
@@ -35,8 +36,8 @@ export default function WebsocketLivePage() {
       setWsStatus("connecting");
       log("Establishing socket connection…", "system");
 
-      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const wsUrl = `${protocol}//${window.location.host}/api/ws/jobs`;
+      const wsUrl = getWsUrl("/ws/jobs");
+      log(`Connecting WebSocket → ${wsUrl}`, "system");
 
       const ws = new WebSocket(wsUrl);
       socketRef.current = ws;
