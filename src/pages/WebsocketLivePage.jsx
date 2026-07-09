@@ -17,6 +17,7 @@ export default function WebsocketLivePage() {
   const [activeSession, setActiveSession] = useState(false);
   const [progress, setProgress] = useState(null);
   const [showScraperConfig, setShowScraperConfig] = useState(false);
+  const [showLogs, setShowLogs] = useState(false);
   const [dbMeta, setDbMeta] = useState(null);
   const [sessionSaved, setSessionSaved] = useState(0);
 
@@ -73,6 +74,7 @@ export default function WebsocketLivePage() {
               countries: scrapeParams.countries,
               collection_name: scrapeParams.collection_name || "live_stream",
               name: scrapeParams.collection_name || "live_stream",
+              strict_caps: true,
             })
           );
         }
@@ -260,6 +262,21 @@ export default function WebsocketLivePage() {
             {showScraperConfig ? "Hide Config" : "Configuration"}
           </button>
           
+          <button
+            type="button"
+            className={`text-xs font-extrabold inline-flex items-center gap-1.5 rounded-xl cursor-pointer active:scale-95 duration-200 shadow-sm px-3.5 py-2.5 transition-all ${
+              showLogs
+                ? "bg-rose-600 border border-rose-600 text-white hover:bg-rose-500 hover:border-rose-500 dark:bg-rose-600 dark:border-rose-600 dark:hover:bg-rose-500"
+                : "bg-indigo-600 border border-indigo-600 text-white hover:bg-indigo-500 hover:border-indigo-500 dark:bg-indigo-500 dark:border-indigo-500 dark:hover:bg-indigo-400 shadow-indigo-600/10"
+            }`}
+            onClick={() => setShowLogs((v) => !v)}
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+            </svg>
+            {showLogs ? "Hide Console" : "Show Console"}
+          </button>
+          
           {/* Connection status badge */}
           <span
             className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold tracking-wide select-none ${
@@ -351,7 +368,11 @@ export default function WebsocketLivePage() {
 
         {/* Right Column: Console terminal & real-time jobs feed */}
         <div className="flex flex-col gap-6 lg:col-span-8 xl:col-span-8 2xl:col-span-9">
-          <LogsTerminal logs={logs} />
+          {showLogs && (
+            <div className="animate-[fade-up_0.3s_cubic-bezier(0.16,1,0.3,1)_forwards]">
+              <LogsTerminal logs={logs} />
+            </div>
+          )}
           <LiveJobsFeed
             streamedJobs={streamedJobs}
             dbMeta={dbMeta}

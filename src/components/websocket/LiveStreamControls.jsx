@@ -56,15 +56,17 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
     const cs = Array.isArray(cfg.cities) ? cfg.cities : [];
     const cos = Array.isArray(cfg.countries) ? cfg.countries : [];
 
-    // Default: all queries & cities from DB; primary country from config.country
-    setSelectedQueries([...qs]);
-    setSelectedCitiesList([...cs]);
+    // Default: 1 query + 1 city + primary country so Target / Hits / Hours caps
+    // control search size. Selecting ALL queries×cities makes searching ignore
+    // the spirit of caps (hundreds of LinkedIn calls). Use "Select All" if needed.
+    setSelectedQueries(qs.length ? [qs[0]] : []);
+    setSelectedCitiesList(cs.length ? [cs[0]] : []);
     const primary = (cfg.country || "").trim();
     if (primary && cos.some((c) => c.toLowerCase() === primary.toLowerCase())) {
       const match = cos.find((c) => c.toLowerCase() === primary.toLowerCase());
-      setSelectedCountries(match ? [match] : [...cos]);
+      setSelectedCountries(match ? [match] : cos.length ? [cos[0]] : []);
     } else if (cos.length) {
-      setSelectedCountries([...cos]);
+      setSelectedCountries([cos[0]]);
     } else {
       setSelectedCountries(primary ? [primary] : []);
     }
@@ -231,20 +233,41 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
       return;
     }
 
-    // Strict parameter caps — integers ≥ 1; never send zero/NaN to the API
-    const t = parseInt(target, 10);
-    const rp = parseInt(resultsPer, 10);
-    const ho = parseInt(hoursOld, 10);
-    const strictTarget =
-      Number.isFinite(t) && t >= 1 ? t : Math.max(1, Number(config?.target) || 20);
-    const strictResultsPer =
-      Number.isFinite(rp) && rp >= 1
-        ? rp
-        : Math.max(1, Number(config?.results_per) || 10);
-    const strictHoursOld =
-      Number.isFinite(ho) && ho >= 1
-        ? ho
-        : Math.max(1, Number(config?.hours_old) || 6);
+    // Strict parameter caps — integers ≥ 1 with hard ceilings (match backend)
+    const clampInt = (raw, fallback, min, max) => {
+      const n = parseInt(raw, 10);
+      if (!Number.isFinite(n)) return fallback;
+      return Math.min(max, Math.max(min, n));
+    };
+    const strictTarget = clampInt(
+      target,
+      Math.max(1, Number(config?.target) || 20),
+      1,
+      200
+    );
+    const strictResultsPer = clampInt(
+      resultsPer,
+      Math.max(1, Number(config?.results_per) || 10),
+      1,
+      50
+    );
+    const strictHoursOld = clampInt(
+      hoursOld,
+      Math.max(1, Number(config?.hours_old) || 6),
+      1,
+      168
+    );
+
+    const comboCount = Math.max(1, finalQueries.length * finalCities.length);
+    if (comboCount > 30) {
+      const ok = window.confirm(
+        `You selected ${finalQueries.length} queries × ${finalCities.length} cities = ${comboCount} search combos.\n\n` +
+          `Caps: target≤${strictTarget}, hits/query≤${strictResultsPer}, hours_old=${strictHoursOld}.\n` +
+          `Backend will still hard-stop at the target / attempt caps, but this can take a long time.\n\n` +
+          `Continue with this large selection?`
+      );
+      if (!ok) return;
+    }
 
     let strictMinExp = null;
     let strictMaxExp = null;
@@ -281,6 +304,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
       from_config: !userTouchedRef.current,
       config_country: config?.country || null,
       strict_caps: true,
+      combo_count: comboCount,
     });
   };
 
@@ -636,9 +660,17 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
           <span className={`block ${sectionLabel}`}>
             Performance parameters{" "}
             <span className="font-normal normal-case text-slate-400">
-              strict caps (API never exceeds these)
+              strict caps — search stops at Target / attempt limit
             </span>
           </span>
+          <p className="text-[10px] leading-relaxed text-slate-400 dark:text-slate-500">
+            <span className="font-semibold text-slate-500 dark:text-slate-400">
+              {selectedQueries.length || 0} queries × {selectedCitiesList.length || 0}{" "}
+              cities
+            </span>{" "}
+            = search combos. Defaults start with 1×1 so caps stay tight — use Select All
+            only if you want a wide crawl.
+          </p>
           <div className="grid grid-cols-3 gap-2">
             <div>
               <label
@@ -652,6 +684,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
                 id="ws-target"
                 type="number"
                 min="1"
+                max="200"
                 step="1"
                 className="input-field px-2 py-2 text-center text-xs font-bold"
                 value={target}
@@ -667,7 +700,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
               <label
                 htmlFor="ws-results"
                 className="mb-1 block text-[10px] font-semibold text-slate-400 dark:text-slate-500"
-                title="Hard cap — max LinkedIn results requested per query"
+                title="Hard cap — max LinkedIn results requested per query×city call"
               >
                 Hits/Query
               </label>
@@ -675,6 +708,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
                 id="ws-results"
                 type="number"
                 min="1"
+                max="50"
                 step="1"
                 className="input-field px-2 py-2 text-center text-xs font-bold"
                 value={resultsPer}
@@ -690,7 +724,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
               <label
                 htmlFor="ws-hours"
                 className="mb-1 block text-[10px] font-semibold text-slate-400 dark:text-slate-500"
-                title="Strict — no auto-expand beyond this window"
+                title="Strict — no auto-expand; older posts dropped after scrape"
               >
                 Hours Old
               </label>
@@ -698,6 +732,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
                 id="ws-hours"
                 type="number"
                 min="1"
+                max="168"
                 step="1"
                 className="input-field px-2 py-2 text-center text-xs font-bold"
                 value={hoursOld}
