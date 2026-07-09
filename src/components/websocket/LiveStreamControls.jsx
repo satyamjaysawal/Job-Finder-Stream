@@ -287,7 +287,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
   const sectionLabel =
     "text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500";
   const wrapperTagsClass =
-    "flex flex-wrap gap-1.5 max-h-36 overflow-y-auto rounded-xl border border-slate-200/50 p-2 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/10";
+    "flex flex-wrap gap-1.5 max-h-36 overflow-y-auto rounded-xl border border-slate-200/40 p-2.5 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/10 scrollbar-thin";
 
   const configReady =
     !configLoading &&
@@ -386,10 +386,10 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
                   type="button"
                   disabled={activeSession}
                   onClick={() => toggleQuery(q)}
-                  className={`cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-semibold tracking-wide transition-all ${
+                  className={`cursor-pointer rounded-xl border px-2.5 py-1 text-xs font-bold transition-all duration-200 active:scale-95 ${
                     selected
-                      ? "border-indigo-650 bg-indigo-600 text-white dark:border-indigo-400 dark:bg-indigo-500"
-                      : "border-slate-200 bg-white text-slate-700 hover:border-slate-350 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-slate-700"
+                      ? "border-indigo-600 bg-indigo-600 text-white dark:border-indigo-500 dark:bg-indigo-500 shadow-sm"
+                      : "border-slate-200/70 bg-white text-slate-700 hover:border-slate-300 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-slate-700"
                   }`}
                 >
                   {q}
@@ -403,10 +403,10 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
                 markTouched();
                 setUseCustomSearch(!useCustomSearch);
               }}
-              className={`cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-bold tracking-wide transition-all ${
+              className={`cursor-pointer rounded-xl border px-2.5 py-1 text-xs font-bold transition-all duration-200 active:scale-95 ${
                 useCustomSearch
-                  ? "border-violet-650 bg-violet-600 text-white dark:border-violet-400 dark:bg-violet-500"
-                  : "border-dashed border-slate-300 bg-white text-slate-500 hover:border-slate-400 dark:border-slate-850 dark:bg-slate-950 dark:text-slate-400"
+                  ? "border-violet-600 bg-violet-600 text-white dark:border-violet-500 dark:bg-violet-500 shadow-sm"
+                  : "border-dashed border-slate-300 bg-white/40 text-slate-500 hover:border-slate-400 dark:border-slate-800 dark:bg-slate-950/20 dark:text-slate-400"
               }`}
             >
               + Custom
@@ -466,10 +466,10 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
                   type="button"
                   disabled={activeSession}
                   onClick={() => toggleCitySelection(c)}
-                  className={`cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-semibold tracking-wide transition-all ${
+                  className={`cursor-pointer rounded-xl border px-2.5 py-1 text-xs font-bold transition-all duration-200 active:scale-95 ${
                     selected
-                      ? "border-indigo-650 bg-indigo-600 text-white dark:border-indigo-400 dark:bg-indigo-500"
-                      : "border-slate-200 bg-white text-slate-700 hover:border-slate-350 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-slate-700"
+                      ? "border-indigo-600 bg-indigo-600 text-white dark:border-indigo-500 dark:bg-indigo-500 shadow-sm"
+                      : "border-slate-200/70 bg-white text-slate-700 hover:border-slate-300 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-slate-700"
                   }`}
                 >
                   {c}
@@ -483,10 +483,10 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
                 markTouched();
                 setUseCustomCity(!useCustomCity);
               }}
-              className={`cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-bold tracking-wide transition-all ${
+              className={`cursor-pointer rounded-xl border px-2.5 py-1 text-xs font-bold transition-all duration-200 active:scale-95 ${
                 useCustomCity
-                  ? "border-violet-650 bg-violet-600 text-white dark:border-violet-400 dark:bg-violet-500"
-                  : "border-dashed border-slate-300 bg-white text-slate-500 hover:border-slate-400 dark:border-slate-850 dark:bg-slate-950 dark:text-slate-400"
+                  ? "border-violet-600 bg-violet-600 text-white dark:border-violet-500 dark:bg-violet-500 shadow-sm"
+                  : "border-dashed border-slate-300 bg-white/40 text-slate-500 hover:border-slate-400 dark:border-slate-800 dark:bg-slate-950/20 dark:text-slate-400"
               }`}
             >
               + Custom
@@ -551,10 +551,10 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
                   type="button"
                   disabled={activeSession}
                   onClick={() => toggleCountry(co)}
-                  className={`cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-semibold tracking-wide transition-all ${
+                  className={`cursor-pointer rounded-xl border px-2.5 py-1 text-xs font-bold transition-all duration-200 active:scale-95 ${
                     selected
-                      ? "border-indigo-650 bg-indigo-600 text-white dark:border-indigo-400 dark:bg-indigo-500"
-                      : "border-slate-200 bg-white text-slate-700 hover:border-slate-350 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-slate-700"
+                      ? "border-indigo-600 bg-indigo-600 text-white dark:border-indigo-500 dark:bg-indigo-500 shadow-sm"
+                      : "border-slate-200/70 bg-white text-slate-700 hover:border-slate-300 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300 dark:hover:border-slate-700"
                   }`}
                   title={isPrimary ? "Primary country in DB config" : undefined}
                 >
@@ -570,10 +570,10 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
                 markTouched();
                 setUseCustomCountry(!useCustomCountry);
               }}
-              className={`cursor-pointer rounded-lg border px-2.5 py-1 text-xs font-bold tracking-wide transition-all ${
+              className={`cursor-pointer rounded-xl border px-2.5 py-1 text-xs font-bold transition-all duration-200 active:scale-95 ${
                 useCustomCountry
-                  ? "border-violet-650 bg-violet-600 text-white dark:border-violet-400 dark:bg-violet-500"
-                  : "border-dashed border-slate-300 bg-white text-slate-500 hover:border-slate-400 dark:border-slate-850 dark:bg-slate-950 dark:text-slate-400"
+                  ? "border-violet-600 bg-violet-600 text-white dark:border-violet-500 dark:bg-violet-500 shadow-sm"
+                  : "border-dashed border-slate-300 bg-white/40 text-slate-500 hover:border-slate-400 dark:border-slate-800 dark:bg-slate-950/20 dark:text-slate-400"
               }`}
             >
               + Custom

@@ -56,7 +56,7 @@ function ConfigListPanel({
             {hint}
           </p>
         )}
-        <div className="flex max-h-40 flex-wrap gap-2 overflow-y-auto pr-1">
+        <div className="flex max-h-40 flex-wrap gap-2 overflow-y-auto pr-1 scrollbar-thin">
           {(items || []).length === 0 && (
             <span className="text-xs text-slate-400">No items yet — add below.</span>
           )}
@@ -341,7 +341,7 @@ export default function ScraperConfigCRUD({ onClose }) {
                 Primary country (default ★)
               </label>
               <select
-                className="input-field py-1.5 text-xs font-semibold"
+                className="input-field py-1.5 text-xs font-semibold dark:bg-slate-900"
                 value={draftCountry}
                 onChange={(e) => setDraftCountry(e.target.value)}
               >

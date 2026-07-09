@@ -9,14 +9,16 @@ export default function JobCard({ job }) {
       : displayValue(job.category, "Job");
 
   return (
-    <article className="panel group flex min-h-[188px] w-full flex-col justify-between p-5 transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/[0.04] dark:hover:border-indigo-400/20 dark:hover:shadow-black/40">
+    <article className="panel group flex min-h-[196px] w-full flex-col justify-between p-5.5 transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/[0.03] dark:hover:border-indigo-400/30 dark:hover:shadow-black/30 glow-container">
       <div>
         {/* Top badges bar */}
-        <div className="mb-3.5 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex flex-wrap gap-1">
-            <span className="chip-accent">{categoryLabel}</span>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 select-none">
+          <div className="flex flex-wrap gap-1.5">
+            <span className="chip-accent px-2.5 py-0.5 rounded-full border border-indigo-200/40 bg-indigo-50/60 dark:border-indigo-900/40 dark:bg-indigo-950/40 dark:text-indigo-400 font-extrabold text-[9.5px]">
+              {categoryLabel}
+            </span>
             {(job.min_exp !== undefined && job.min_exp !== null || job.max_exp !== undefined && job.max_exp !== null) && (
-              <span className="chip">
+              <span className="chip px-2.5 py-0.5 rounded-full border border-slate-200 bg-slate-100/60 dark:border-slate-800 dark:bg-slate-900/50 font-extrabold text-[9.5px] text-slate-500 dark:text-slate-400">
                 {job.min_exp !== null && job.max_exp !== null && job.min_exp !== undefined && job.max_exp !== undefined
                   ? `${job.min_exp}–${job.max_exp} yrs`
                   : job.min_exp !== null && job.min_exp !== undefined
@@ -26,25 +28,25 @@ export default function JobCard({ job }) {
             )}
           </div>
           {job.time_ago && (
-            <span className="text-[11px] font-semibold text-slate-450 dark:text-slate-500">
+            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">
               {job.time_ago}
             </span>
           )}
         </div>
 
         {/* Title & Company */}
-        <h2 className="mb-1.5 line-clamp-2 text-[14.5px] font-extrabold leading-snug tracking-tight text-slate-900 dark:text-white transition group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+        <h2 className="mb-2 line-clamp-2 text-[15px] font-extrabold leading-snug tracking-tight text-slate-900 dark:text-white transition duration-300 group-hover:text-indigo-650 dark:group-hover:text-indigo-400">
           {displayValue(job.title, "Untitled Role")}
         </h2>
-        <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
+        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
           {displayValue(job.company)}
         </p>
       </div>
 
       {/* Footer Details */}
-      <div className="mt-4 flex items-center justify-between gap-2.5 border-t border-slate-100 pt-3.5 dark:border-slate-900/60">
-        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-450 dark:text-slate-500 truncate">
-          <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+      <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4 dark:border-slate-900/70">
+        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-450 dark:text-slate-500 truncate" title={displayValue(job.location || job.city)}>
+          <svg className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1 1 15 0Z" />
           </svg>
@@ -56,7 +58,7 @@ export default function JobCard({ job }) {
             href={job.job_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 rounded-lg bg-indigo-50/50 border border-indigo-100/50 px-2.5 py-1 text-xs font-bold text-indigo-650 hover:bg-indigo-600 hover:text-white dark:bg-indigo-950/40 dark:border-indigo-900/60 dark:text-indigo-400 dark:hover:bg-indigo-500 dark:hover:text-white transition-all cursor-pointer shadow-sm"
+            className="inline-flex items-center gap-1 rounded-xl bg-indigo-50/60 border border-indigo-150/40 px-3 py-1.5 text-xs font-bold text-indigo-650 hover:bg-indigo-600 hover:border-indigo-600 hover:text-white dark:bg-indigo-950/40 dark:border-indigo-900/60 dark:text-indigo-400 dark:hover:bg-indigo-550 dark:hover:text-white transition-all cursor-pointer shadow-sm active:scale-95 duration-200 shrink-0"
           >
             Apply
             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.8">

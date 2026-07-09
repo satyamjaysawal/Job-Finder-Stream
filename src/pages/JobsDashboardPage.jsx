@@ -162,7 +162,7 @@ export default function JobsDashboardPage() {
               </span>
               
               {activeJsonMeta?.created_at && (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 border border-slate-200 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-655 dark:bg-slate-900/70 dark:border-slate-800 dark:text-slate-400">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 border border-slate-200 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:bg-slate-900/70 dark:border-slate-800 dark:text-slate-400">
                   <svg className="h-3.5 w-3.5 text-slate-450 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -213,7 +213,7 @@ export default function JobsDashboardPage() {
                     <button
                       type="button"
                       onClick={() => setQueriesExpanded(!queriesExpanded)}
-                      className="text-[10px] font-bold text-indigo-650 dark:text-indigo-400 hover:text-indigo-750 hover:underline cursor-pointer transition-all"
+                      className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 hover:underline cursor-pointer transition-all"
                     >
                       {queriesExpanded ? "Collapse List" : `Show All (+${queriesList.length - 4})`}
                     </button>
@@ -307,13 +307,12 @@ export default function JobsDashboardPage() {
         <div>
           <p className="page-kicker">Data Warehouse</p>
           <h2 className="page-title">Database Collections</h2>
-          <p className="page-subtitle">
+          <p className="page-subtitle mt-2">
             Audit and browse every MongoDB snapshot — including each{" "}
-            <span className="font-semibold text-slate-700 dark:text-slate-300">
+            <span className="font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded-md text-[11.5px] border border-slate-200/50 dark:border-slate-800 select-none">
               Start Live Stream
             </span>{" "}
-            run (<span className="font-mono text-[11px]">live_stream_&lt;timestamp&gt;</span>
-            ).
+             run (<span className="font-mono text-[11px] font-bold text-indigo-600 dark:text-indigo-400">live_stream_&lt;timestamp&gt;</span>).
           </p>
         </div>
         <button
@@ -342,15 +341,15 @@ export default function JobsDashboardPage() {
 
       {/* Snapshot Search & Tab Filters Panel */}
       {jobCollections.length > 0 && (
-        <div className="panel mb-6 p-4 flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
+        <div className="panel mb-6 p-4 flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
           {/* Tab Buttons */}
-          <div className="flex gap-1 bg-slate-100 dark:bg-slate-900/60 p-1 rounded-xl self-start">
+          <div className="flex gap-1 bg-slate-100/80 dark:bg-slate-900/60 p-1 rounded-xl self-start select-none border border-slate-200/25 dark:border-slate-800/40">
             <button
               type="button"
-              className={`px-3 py-1.5 text-xs font-bold rounded-lg cursor-pointer transition-all duration-200 ${
+              className={`px-3.5 py-1.5 text-xs font-extrabold rounded-lg cursor-pointer transition-all duration-200 ${
                 activeTab === "all"
                   ? "bg-white text-indigo-700 shadow-sm dark:bg-slate-950 dark:text-indigo-400"
-                  : "text-slate-500 hover:text-slate-800 dark:text-slate-450 dark:hover:text-slate-200"
+                  : "text-slate-500 hover:text-slate-850 dark:text-slate-450 dark:hover:text-slate-250"
               }`}
               onClick={() => setActiveTab("all")}
             >
@@ -358,10 +357,10 @@ export default function JobsDashboardPage() {
             </button>
             <button
               type="button"
-              className={`px-3 py-1.5 text-xs font-bold rounded-lg cursor-pointer transition-all duration-200 ${
+              className={`px-3.5 py-1.5 text-xs font-extrabold rounded-lg cursor-pointer transition-all duration-200 ${
                 activeTab === "live"
                   ? "bg-white text-indigo-700 shadow-sm dark:bg-slate-950 dark:text-indigo-400"
-                  : "text-slate-500 hover:text-slate-800 dark:text-slate-450 dark:hover:text-slate-200"
+                  : "text-slate-500 hover:text-slate-850 dark:text-slate-450 dark:hover:text-slate-250"
               }`}
               onClick={() => setActiveTab("live")}
             >
@@ -369,10 +368,10 @@ export default function JobsDashboardPage() {
             </button>
             <button
               type="button"
-              className={`px-3 py-1.5 text-xs font-bold rounded-lg cursor-pointer transition-all duration-200 ${
+              className={`px-3.5 py-1.5 text-xs font-extrabold rounded-lg cursor-pointer transition-all duration-200 ${
                 activeTab === "snapshots"
                   ? "bg-white text-indigo-700 shadow-sm dark:bg-slate-950 dark:text-indigo-400"
-                  : "text-slate-500 hover:text-slate-800 dark:text-slate-450 dark:hover:text-slate-200"
+                  : "text-slate-500 hover:text-slate-850 dark:text-slate-450 dark:hover:text-slate-250"
               }`}
               onClick={() => setActiveTab("snapshots")}
             >
@@ -382,7 +381,7 @@ export default function JobsDashboardPage() {
 
           {/* Search Input */}
           <div className="relative flex-1 max-w-md w-full">
-            <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400">
+            <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-400">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.637 10.637Z" />
               </svg>
@@ -390,17 +389,17 @@ export default function JobsDashboardPage() {
             <input
               type="text"
               placeholder="Search collections by name, ID, or query term..."
-              className="input-field pl-9.5 pr-8 py-2 text-xs"
+              className="input-field pl-10 pr-9 py-2 text-xs"
               value={snapshotSearch}
               onChange={(e) => setSnapshotSearch(e.target.value)}
             />
             {snapshotSearch && (
               <button
                 type="button"
-                className="absolute inset-y-0 right-2.5 flex items-center text-slate-400 hover:text-slate-650 dark:hover:text-slate-350 cursor-pointer"
+                className="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 cursor-pointer"
                 onClick={() => setSnapshotSearch("")}
               >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>

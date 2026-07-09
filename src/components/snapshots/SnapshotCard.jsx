@@ -125,10 +125,10 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
 
   return (
     <article
-      className={`panel flex flex-col p-5 transition-all duration-300 relative overflow-hidden group ${
+      className={`panel flex flex-col p-5 transition-all duration-300 relative overflow-hidden group glow-container ${
         active
-          ? "border-indigo-500 ring-2 ring-indigo-500/10 shadow-lg shadow-indigo-500/[0.03] dark:border-indigo-400 dark:ring-indigo-400/10 scale-[1.01]"
-          : "hover:border-slate-350 dark:hover:border-slate-700 hover:shadow-md hover:-translate-y-0.5"
+          ? "border-indigo-550 ring-4 ring-indigo-500/10 shadow-lg shadow-indigo-500/[0.03] dark:border-indigo-400 dark:ring-indigo-400/10 scale-[1.01]"
+          : "hover:border-indigo-500/20 hover:shadow-md hover:-translate-y-0.5"
       }`}
     >
       {/* Decorative top strip */}
@@ -136,7 +136,7 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
         className={`absolute top-0 left-0 right-0 h-1.5 transition-colors duration-300 ${
           isLiveStream
             ? "bg-gradient-to-r from-amber-500 to-rose-500 animate-pulse"
-            : "bg-gradient-to-r from-slate-400 to-indigo-500"
+            : "bg-gradient-to-r from-slate-300 to-indigo-500"
         }`}
       />
 
@@ -144,7 +144,7 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             {isLiveStream ? (
-              <span className="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+              <span className="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400 select-none">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
@@ -152,25 +152,25 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
                 Live Stream Run
               </span>
             ) : (
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-450 dark:text-slate-500">
+              <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 dark:text-slate-500 select-none">
                 Database Snapshot
               </span>
             )}
           </div>
           <h3
-            className="mt-2 break-all text-sm font-extrabold leading-snug tracking-tight text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"
+            className="mt-2.5 break-all text-sm font-extrabold leading-snug tracking-tight text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"
             title={collectionName}
           >
             {collectionName}
           </h3>
-          <p className="mt-2 text-xs font-semibold text-slate-450 dark:text-slate-500 flex items-center gap-1">
+          <p className="mt-2 text-xs font-bold text-slate-450 dark:text-slate-500 flex items-center gap-1">
             <svg className="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             {formatWhen(item.created_at)}
             {item.status && item.status !== "completed" ? (
               <>
-                <span className="text-slate-300 dark:text-slate-700">·</span>
+                <span className="text-slate-350 dark:text-slate-700">·</span>
                 <span className="text-amber-600 font-bold dark:text-amber-400 animate-pulse capitalize">
                   {item.status}
                 </span>
@@ -181,7 +181,7 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
         
         <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5">
           {active && (
-            <span className="inline-flex items-center rounded-full bg-indigo-50 border border-indigo-150 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-900/60 dark:text-indigo-400">
+            <span className="inline-flex items-center rounded-full bg-indigo-50 border border-indigo-150 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-900/60 dark:text-indigo-400">
               Active
             </span>
           )}
@@ -200,18 +200,31 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
         caps.results_per != null ||
         caps.hours_old != null ||
         caps.city) && (
-        <div className="mt-4 p-3 rounded-xl border border-slate-150/70 bg-slate-50/40 dark:border-slate-850/60 dark:bg-slate-950/20 flex flex-wrap gap-1.5">
-          {item.search_term && (
-            <span className="inline-flex items-center gap-1 rounded-lg border border-indigo-100 bg-indigo-50/40 px-2 py-1 text-[10px] font-bold text-indigo-700 dark:border-indigo-950 dark:bg-indigo-950/20 dark:text-indigo-450">
-              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.637 10.637Z" />
-              </svg>
-              “{item.search_term}”
-            </span>
-          )}
+        <div className="mt-4 p-3 rounded-xl border border-slate-200/50 bg-slate-50/40 dark:border-slate-800 dark:bg-slate-950/20 flex flex-wrap gap-1.5 items-center">
+          {item.search_term && (() => {
+            const rawSearch = item.search_term || "";
+            const searchTerms = rawSearch ? rawSearch.split(',').map(t => t.trim()).filter(Boolean) : [];
+            return (
+              <>
+                {searchTerms.slice(0, 3).map((term, index) => (
+                  <span key={index} className="inline-flex items-center gap-1 rounded-lg border border-indigo-100/60 bg-indigo-50/40 px-2 py-0.5 text-[10px] font-bold text-indigo-750 dark:border-indigo-950 dark:bg-indigo-950/30 dark:text-indigo-400">
+                    <svg className="h-2.5 w-2.5 text-indigo-500 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.637 10.637Z" />
+                    </svg>
+                    {term}
+                  </span>
+                ))}
+                {searchTerms.length > 3 && (
+                  <span className="inline-flex items-center rounded-lg border border-indigo-100/30 bg-indigo-50/20 px-2 py-0.5 text-[9px] font-extrabold text-indigo-500 dark:text-indigo-400" title={rawSearch}>
+                    +{searchTerms.length - 3} more
+                  </span>
+                )}
+              </>
+            );
+          })()}
           {caps.city && (
-            <span className="inline-flex items-center gap-1 rounded-lg border border-violet-100 bg-violet-50/40 px-2 py-1 text-[10px] font-bold text-violet-700 dark:border-violet-950 dark:bg-violet-950/20 dark:text-violet-450">
-              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+            <span className="inline-flex items-center gap-1 rounded-lg border border-violet-100/60 bg-violet-50/40 px-2 py-0.5 text-[10px] font-bold text-violet-700 dark:border-violet-950 dark:bg-violet-950/30 dark:text-violet-400">
+              <svg className="h-3 w-3 text-violet-500 dark:text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25s-7.5-4.108-7.5-11.25a7.5 7.5 0 1 1 15 0z" />
               </svg>
@@ -219,39 +232,48 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
             </span>
           )}
           {limitVal != null && (
-            <span className="inline-flex items-center gap-1 rounded-lg border border-emerald-100 bg-emerald-50/40 px-2 py-1 text-[10px] font-bold text-emerald-700 dark:border-emerald-950 dark:bg-emerald-950/20 dark:text-emerald-450">
-              🎯 Cap: {limitVal}
+            <span className="inline-flex items-center gap-1 rounded-lg border border-emerald-150 bg-emerald-50/40 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:border-emerald-950 dark:bg-emerald-950/30 dark:text-emerald-400">
+              <svg className="h-3 w-3 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+              </svg>
+              Cap: {limitVal}
             </span>
           )}
           {caps.results_per != null && (
-            <span className="inline-flex items-center gap-1 rounded-lg border border-sky-100 bg-sky-50/40 px-2 py-1 text-[10px] font-bold text-sky-700 dark:border-sky-950 dark:bg-sky-950/20 dark:text-sky-450">
-              📊 Hits/Q: {caps.results_per}
+            <span className="inline-flex items-center gap-1 rounded-lg border border-sky-100 bg-sky-50/40 px-2 py-0.5 text-[10px] font-bold text-sky-700 dark:border-sky-950 dark:bg-sky-950/30 dark:text-sky-400">
+              <svg className="h-3 w-3 text-sky-650 dark:text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 10.5V19.5m4.5-6v6m4.5-10.5v10.5m4.5-15v15M21 12v7.5" />
+              </svg>
+              Hits/Q: {caps.results_per}
             </span>
           )}
           {caps.hours_old != null && (
-            <span className="inline-flex items-center gap-1 rounded-lg border border-amber-100 bg-amber-50/40 px-2 py-1 text-[10px] font-bold text-amber-700 dark:border-amber-950 dark:bg-amber-950/20 dark:text-amber-450">
-              ⏱️ {caps.hours_old}h limit
+            <span className="inline-flex items-center gap-1 rounded-lg border border-amber-100 bg-amber-50/40 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:border-amber-950 dark:bg-amber-950/30 dark:text-amber-400">
+              <svg className="h-3 w-3 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+              {caps.hours_old}h limit
             </span>
           )}
         </div>
       )}
 
       {open && (
-        <div className="mt-4 border-t border-slate-150 dark:border-slate-850 pt-4 space-y-4 text-xs animate-[fade-down_0.2s_ease-out]">
+        <div className="mt-4 border-t border-slate-150 dark:border-slate-850 pt-4 space-y-4 text-xs animate-[fade-up_0.2s_ease-out]">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-xl border border-slate-150/70 bg-slate-50/40 dark:border-slate-850/60 dark:bg-slate-900/10 p-3">
             <div>
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-450 dark:text-slate-500">
                 Collection Identifier
               </span>
-              <div className="mt-1 break-all font-mono text-[10px] font-bold text-slate-600 dark:text-slate-400 selection:bg-indigo-500 selection:text-white">
+              <div className="mt-1 break-all font-mono text-[10px] font-bold text-slate-655 dark:text-slate-400 selection:bg-indigo-500 selection:text-white">
                 {item.id}
               </div>
             </div>
             <div>
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-450 dark:text-slate-500">
                 Default Filter Details
               </span>
-              <div className="mt-1 text-[11px] font-bold text-slate-700 dark:text-slate-300">
+              <div className="mt-1 text-[11px] font-bold text-slate-700 dark:text-slate-350">
                 {item.filters?.city || "All Cities"}
                 {item.filters?.countries ? ` · ${item.filters.countries}` : ""}
                 {item.filters?.category ? ` · ${item.filters.category}` : ""}
@@ -261,8 +283,8 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-450 dark:text-slate-500 flex items-center gap-1">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-450 dark:text-slate-500 flex items-center gap-1.5">
                 <svg className="h-3.5 w-3.5 text-indigo-500 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
                 </svg>
@@ -272,43 +294,43 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className="rounded-lg bg-slate-100/70 border border-slate-200/50 hover:border-slate-300/80 px-2 py-1 text-[10px] font-bold text-slate-700 hover:bg-slate-200 dark:bg-slate-900/60 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-all cursor-pointer inline-flex items-center gap-1"
+                  className="rounded-lg bg-slate-100/70 border border-slate-200/50 hover:border-slate-350 px-2 py-1 text-[10px] font-bold text-slate-700 hover:bg-slate-200 dark:bg-slate-900/60 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-all cursor-pointer inline-flex items-center gap-1 active:scale-95"
                 >
                   <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                   </svg>
-                  {copied ? "Copied JSON!" : "Copy JSON"}
+                  {copied ? "Copied!" : "Copy JSON"}
                 </button>
               )}
             </div>
 
             {loadingDetails ? (
               <div className="flex flex-col items-center justify-center py-8 rounded-xl border border-slate-150/70 bg-slate-950/5 dark:border-slate-850/60 p-4">
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent dark:border-indigo-400" />
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-650 border-t-transparent dark:border-indigo-400" />
                 <p className="mt-2.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 animate-pulse">
                   Querying database document...
                 </p>
               </div>
             ) : (
-              <div className="relative rounded-xl border border-slate-850/75 bg-slate-950 shadow-inner overflow-hidden">
+              <div className="relative rounded-xl border border-slate-850/70 bg-slate-950 shadow-inner overflow-hidden terminal-scanlines">
                 {/* Mock code terminal top bar */}
-                <div className="flex items-center justify-between px-4 py-2 border-b border-slate-850 bg-slate-900">
+                <div className="flex items-center justify-between px-4 py-2 border-b border-slate-900 bg-slate-950 select-none">
                   <div className="flex items-center gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
                     <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
                   </div>
-                  <span className="font-mono text-[9px] tracking-wide text-slate-500 uppercase select-none">
+                  <span className="font-mono text-[9px] tracking-widest text-slate-500 uppercase">
                     mongodb_schema.json
                   </span>
-                  <div className="w-12 h-3" /> {/* Spacer spacer */}
+                  <div className="w-12 h-3" />
                 </div>
                 {/* Terminal console area */}
                 <pre className="max-h-56 overflow-y-auto p-3 font-mono text-[10px] leading-relaxed select-text scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
                   {fullData ? (
                     highlightJson(fullData)
                   ) : (
-                    <div className="text-slate-650 italic px-1.5 font-mono select-none">
+                    <div className="text-slate-600 italic px-1.5 font-mono select-none">
                       // MongoDB collection currently empty. No documents to sample.
                     </div>
                   )}
@@ -320,58 +342,60 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
       )}
 
       {/* Action Button Row */}
-      <div className="mt-auto pt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 dark:border-slate-900/60">
+      <div className="mt-auto pt-4 flex flex-wrap items-center gap-2 border-t border-slate-200/50 dark:border-slate-900/60 w-full justify-between">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            className="btn-primary text-xs cursor-pointer py-1.5 px-3.5 rounded-xl font-bold inline-flex items-center gap-1.5 shadow-sm active:scale-95 duration-200"
+            disabled={opening || deleting}
+            onClick={handleOpen}
+          >
+            {opening ? (
+              <>
+                <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Loading...
+              </>
+            ) : (
+              <>
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
+                </svg>
+                Browse Jobs
+              </>
+            )}
+          </button>
+          <button
+            type="button"
+            className="btn-ghost text-xs cursor-pointer py-1.5 px-3.5 rounded-xl font-bold inline-flex items-center gap-1.5 active:scale-95 duration-200"
+            onClick={() => dispatch(toggleOpenCard(item.id))}
+          >
+            {open ? (
+              <>
+                <svg className="h-3.5 w-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                </svg>
+                Collapse
+              </>
+            ) : (
+              <>
+                <svg className="h-3.5 w-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                </svg>
+                Audit Details
+              </>
+            )}
+          </button>
+        </div>
         <button
           type="button"
-          className="btn-primary text-xs cursor-pointer py-1.5 px-3.5 rounded-xl font-bold inline-flex items-center gap-1.5 shadow-sm active:scale-95 duration-200"
-          disabled={opening || deleting}
-          onClick={handleOpen}
-        >
-          {opening ? (
-            <>
-              <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              Loading...
-            </>
-          ) : (
-            <>
-              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0V6A2.25 2.25 0 016 3.75h3.879a1.5 1.5 0 011.06.44l2.122 2.12a1.5 1.5 0 001.06.44H18A2.25 2.25 0 0120.25 9v.776" />
-              </svg>
-              Browse Jobs
-            </>
-          )}
-        </button>
-        <button
-          type="button"
-          className="btn-ghost text-xs cursor-pointer py-1.5 px-3.5 rounded-xl font-bold inline-flex items-center gap-1.5 active:scale-95 duration-200"
-          onClick={() => dispatch(toggleOpenCard(item.id))}
-        >
-          {open ? (
-            <>
-              <svg className="h-3.5 w-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-              </svg>
-              Collapse
-            </>
-          ) : (
-            <>
-              <svg className="h-3.5 w-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-              </svg>
-              Audit Details
-            </>
-          )}
-        </button>
-        <button
-          type="button"
-          className="btn-danger inline-flex items-center gap-1 py-1.5 px-3.5 rounded-xl font-bold cursor-pointer transition-all duration-200 active:scale-95 ml-auto"
+          className="btn-danger inline-flex items-center gap-1 py-1.5 px-3.5 rounded-xl font-bold cursor-pointer transition-all duration-200 active:scale-95"
           disabled={deleting || opening}
           onClick={handleDelete}
         >
           <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
-          {deleting ? "Deleting…" : "Delete Snapshot"}
+          {deleting ? "Deleting…" : "Delete"}
         </button>
       </div>
     </article>

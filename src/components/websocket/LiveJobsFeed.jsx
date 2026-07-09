@@ -3,20 +3,20 @@ import JobCard from "../JobCard";
 function MetaChip({ label, value, accent = false, mono = false }) {
   return (
     <div
-      className={`flex min-w-0 flex-col gap-0.5 rounded-xl border px-3 py-2 ${
+      className={`flex min-w-0 flex-col gap-0.5 rounded-xl border px-3 py-2 transition-colors duration-200 ${
         accent
-          ? "border-emerald-200/80 bg-emerald-50/70 dark:border-emerald-900/50 dark:bg-emerald-950/30"
-          : "border-slate-200/80 bg-white/80 dark:border-slate-800 dark:bg-slate-950/50"
+          ? "border-emerald-200/60 bg-emerald-50/50 dark:border-emerald-950/35 dark:bg-emerald-950/20"
+          : "border-slate-200/50 bg-white/50 dark:border-slate-850/50 dark:bg-slate-950/25"
       }`}
     >
-      <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+      <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 select-none">
         {label}
       </span>
       <span
         className={`truncate text-xs font-extrabold ${
           accent
             ? "text-emerald-700 dark:text-emerald-400"
-            : "text-slate-800 dark:text-slate-100"
+            : "text-slate-850 dark:text-slate-200"
         } ${mono ? "font-mono tracking-tight" : ""}`}
         title={value != null && value !== "" ? String(value) : "—"}
       >
@@ -35,18 +35,18 @@ export default function LiveJobsFeed({ streamedJobs, dbMeta, sessionSaved = 0 })
 
   return (
     <div className="panel flex h-full min-h-[50vh] flex-1 flex-col p-5">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3 dark:border-slate-900/60">
+      <div className="mb-4.5 flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3.5 dark:border-slate-900/60 select-none">
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">
             Realtime Feed
           </h3>
           {meta.connected ? (
-            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-400">
+            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-400">
               <span className="status-dot status-online" />
               MongoDB live
             </span>
           ) : meta.connected === false ? (
-            <span className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 px-2 py-0.5 text-[10px] font-bold text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-400">
+            <span className="inline-flex items-center gap-1 rounded-full border border-rose-250/30 bg-rose-50/50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-400">
               <span className="status-dot status-offline" />
               DB offline
             </span>
