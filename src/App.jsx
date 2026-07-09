@@ -9,6 +9,7 @@ import {
 import { fetchConfig } from "./store/slices/configSlice";
 import { fetchScrapeJsonList } from "./store/slices/scrapeJsonSlice";
 import { notifyError, notifySuccess } from "./store/notify";
+import { apiUrl } from "./store/api";
 
 import Header from "./components/Header";
 import Toast from "./components/Toast";
@@ -47,7 +48,8 @@ export default function App() {
     dispatch(fetchConfig());
     dispatch(fetchScrapeJsonList({ quiet: true }));
 
-    fetch("/api/health")
+    // Use apiUrl so production hits the Vercel backend, not same-origin /api (404).
+    fetch(apiUrl("health"))
       .then(async (res) => {
         if (!res.ok) {
           notifyError(dispatch, `API health check failed (HTTP ${res.status}).`);
