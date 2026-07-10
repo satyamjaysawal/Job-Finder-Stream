@@ -97,6 +97,39 @@ export default function JobsDashboardPage() {
   const isCardOpen = (key) => openCardId === key;
   const isCardActive = (key) => selectedJsonId === key;
 
+  const hasActiveFilters = useMemo(() => {
+    return (
+      search.trim() !== "" ||
+      filterCity !== "all" ||
+      filterCompany !== "all" ||
+      filterEasyApply !== "all" ||
+      filterWorkplace !== "all" ||
+      filterJobType !== "all" ||
+      filterExperience !== "all" ||
+      sortBy !== "default"
+    );
+  }, [
+    search,
+    filterCity,
+    filterCompany,
+    filterEasyApply,
+    filterWorkplace,
+    filterJobType,
+    filterExperience,
+    sortBy,
+  ]);
+
+  const handleResetFilters = () => {
+    setSearch("");
+    setFilterCity("all");
+    setFilterCompany("all");
+    setFilterEasyApply("all");
+    setFilterWorkplace("all");
+    setFilterJobType("all");
+    setFilterExperience("all");
+    setSortBy("default");
+  };
+
   const totalCollections = jobCollections.length;
   const totalJobsTracked = jobCollections.reduce(
     (acc, item) => acc + (item.job_count || 0),
@@ -378,19 +411,33 @@ export default function JobsDashboardPage() {
           <div className="panel mb-6 flex flex-col gap-4 p-4">
             {/* Top row: search + count */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="relative flex-1">
-                <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-                  <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.637 10.637Z" />
-                  </svg>
-                </span>
-                <input
-                  type="search"
-                  className="input-field pl-10"
-                  placeholder="Filter roles by title, company name, or location…"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
+              <div className="relative flex-1 flex gap-2">
+                <div className="relative flex-1">
+                  <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+                    <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.637 10.637Z" />
+                    </svg>
+                  </span>
+                  <input
+                    type="search"
+                    className="input-field pl-10"
+                    placeholder="Filter roles by title, company name, or location…"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
+                {hasActiveFilters && (
+                  <button
+                    type="button"
+                    onClick={handleResetFilters}
+                    className="btn-danger inline-flex items-center gap-1.5 py-2.5 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer hover:bg-rose-650 hover:text-white shrink-0 active:scale-95 duration-200"
+                  >
+                    <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Reset
+                  </button>
+                )}
               </div>
               <div className="flex shrink-0 items-center justify-between sm:justify-end gap-2.5">
                 <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">Showing</span>
