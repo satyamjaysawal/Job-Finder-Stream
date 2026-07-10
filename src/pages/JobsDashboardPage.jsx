@@ -9,6 +9,40 @@ import SnapshotCard from "../components/snapshots/SnapshotCard";
 import JobCard from "../components/JobCard";
 import { formatWhen } from "../utils/display";
 
+const parseTimeToMinutes = (ta) => {
+  if (!ta) return Infinity;
+  const s = String(ta).trim().toLowerCase();
+  
+  if (s.endsWith("m")) {
+    return parseInt(s, 10) || 0;
+  }
+  if (s.endsWith("h")) {
+    return (parseInt(s, 10) || 0) * 60;
+  }
+  
+  if (s.includes("min") || s.includes("minute")) {
+    const match = s.match(/(\d+)/);
+    return match ? parseInt(match[0], 10) : Infinity;
+  }
+  if (s.includes("hour") || s.includes("hr")) {
+    const match = s.match(/(\d+)/);
+    return match ? parseInt(match[0], 10) * 60 : Infinity;
+  }
+  if (s.includes("day")) {
+    const match = s.match(/(\d+)/);
+    return match ? parseInt(match[0], 10) * 24 * 60 : Infinity;
+  }
+  if (s.includes("week")) {
+    const match = s.match(/(\d+)/);
+    return match ? parseInt(match[0], 10) * 7 * 24 * 60 : Infinity;
+  }
+  if (s.includes("just now") || s.includes("moment")) {
+    return 1;
+  }
+  
+  return Infinity;
+};
+
 export default function JobsDashboardPage() {
   const dispatch = useAppDispatch();
   const {
@@ -28,6 +62,10 @@ export default function JobsDashboardPage() {
   const [activeTab, setActiveTab] = useState("all"); // 'all', 'live', 'snapshots'
   const [queriesExpanded, setQueriesExpanded] = useState(false);
 
+  const [sortBy, setSortBy] = useState("default");
+  const [filterCity, setFilterCity] = useState("all");
+  const [filterCompany, setFilterCompany] = useState("all");
+
   const queriesList = useMemo(() => {
     if (!activeJsonMeta?.search_term) return [];
     return activeJsonMeta.search_term
@@ -43,6 +81,9 @@ export default function JobsDashboardPage() {
   useEffect(() => {
     setSearch("");
     setQueriesExpanded(false);
+    setSortBy("default");
+    setFilterCity("all");
+    setFilterCompany("all");
   }, [selectedJsonId]);
 
   const isCardOpen = (key) => openCardId === key;
@@ -54,16 +95,70 @@ export default function JobsDashboardPage() {
     0
   );
 
-  const filteredJobs = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return activeJobs;
-    return activeJobs.filter((job) => {
-      const title = (job.title || "").toLowerCase();
-      const company = (job.company || "").toLowerCase();
-      const location = (job.location || job.city || "").toLowerCase();
-      return title.includes(q) || company.includes(q) || location.includes(q);
+  const uniqueCities = useMemo(() => {
+    const citiesSet = new Set();
+    activeJobs.forEach((job) => {
+      const city = job.city || job.location;
+      if (city) {
+        const cleanCity = city.split(",")[0].trim();
+        if (cleanCity) citiesSet.add(cleanCity);
+      }
     });
-  }, [activeJobs, search]);
+    return Array.from(citiesSet).sort();
+  }, [activeJobs]);
+
+  const uniqueCompanies = useMemo(() => {
+    const compSet = new Set();
+    activeJobs.forEach((job) => {
+      if (job.company && job.company !== "Unknown") {
+        compSet.add(job.company.trim());
+      }
+    });
+    return Array.from(compSet).sort();
+  }, [activeJobs]);
+
+  const filteredJobs = useMemo(() => {
+    let result = [...activeJobs];
+
+    const q = search.trim().toLowerCase();
+    if (q) {
+      result = result.filter((job) => {
+        const title = (job.title || "").toLowerCase();
+        const company = (job.company || "").toLowerCase();
+        const location = (job.location || job.city || "").toLowerCase();
+        return title.includes(q) || company.includes(q) || location.includes(q);
+      });
+    }
+
+    if (filterCity !== "all") {
+      result = result.filter((job) => {
+        const city = job.city || job.location || "";
+        return city.toLowerCase().includes(filterCity.toLowerCase());
+      });
+    }
+
+    if (filterCompany !== "all") {
+      result = result.filter((job) => {
+        return (job.company || "").trim().toLowerCase() === filterCompany.toLowerCase();
+      });
+    }
+
+    if (sortBy === "newest") {
+      result.sort((a, b) => parseTimeToMinutes(a.time_ago) - parseTimeToMinutes(b.time_ago));
+    } else if (sortBy === "oldest") {
+      result.sort((a, b) => parseTimeToMinutes(b.time_ago) - parseTimeToMinutes(a.time_ago));
+    } else if (sortBy === "title_asc") {
+      result.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+    } else if (sortBy === "title_desc") {
+      result.sort((a, b) => (b.title || "").localeCompare(a.title || ""));
+    } else if (sortBy === "company_asc") {
+      result.sort((a, b) => (a.company || "").localeCompare(b.company || ""));
+    } else if (sortBy === "company_desc") {
+      result.sort((a, b) => (b.company || "").localeCompare(a.company || ""));
+    }
+
+    return result;
+  }, [activeJobs, search, filterCity, filterCompany, sortBy]);
 
   const liveStreamsCount = useMemo(() => {
     return jobCollections.filter(
@@ -240,27 +335,90 @@ export default function JobsDashboardPage() {
         </div>
 
         {!isLoadingJobs && (
-          <div className="panel mb-6 flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
-            {/* Magnifying glass search bar wrapper */}
-            <div className="relative flex-1">
-              <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-                <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.637 10.637Z" />
-                </svg>
-              </span>
-              <input
-                type="search"
-                className="input-field pl-10"
-                placeholder="Filter roles by title, company name, or location…"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+          <div className="panel mb-6 flex flex-col gap-4 p-4">
+            {/* Top row: search + count */}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <div className="relative flex-1">
+                <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+                  <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.637 10.637Z" />
+                  </svg>
+                </span>
+                <input
+                  type="search"
+                  className="input-field pl-10"
+                  placeholder="Filter roles by title, company name, or location…"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+              <div className="flex shrink-0 items-center justify-between sm:justify-end gap-2.5">
+                <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">Showing</span>
+                <span className="rounded-full bg-indigo-50 border border-indigo-100 px-3 py-1 text-xs font-extrabold text-indigo-600 dark:bg-indigo-950/40 dark:border-indigo-900/60 dark:text-indigo-400">
+                  {filteredJobs.length} of {activeJobs.length}
+                </span>
+              </div>
             </div>
-            <div className="flex shrink-0 items-center justify-between sm:justify-end gap-2.5">
-              <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">Showing</span>
-              <span className="rounded-full bg-indigo-50 border border-indigo-100 px-3 py-1 text-xs font-extrabold text-indigo-600 dark:bg-indigo-950/40 dark:border-indigo-900/60 dark:text-indigo-400">
-                {filteredJobs.length} of {activeJobs.length}
-              </span>
+
+            {/* Bottom row: filters and sort options */}
+            <div className="grid grid-cols-1 gap-3 border-t border-slate-100/60 pt-3 dark:border-slate-800/40 sm:grid-cols-3">
+              {/* Filter by City */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  Filter by Location
+                </label>
+                <select
+                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  value={filterCity}
+                  onChange={(e) => setFilterCity(e.target.value)}
+                >
+                  <option value="all">All Locations</option>
+                  {uniqueCities.map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Filter by Company */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  Filter by Company
+                </label>
+                <select
+                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  value={filterCompany}
+                  onChange={(e) => setFilterCompany(e.target.value)}
+                >
+                  <option value="all">All Companies</option>
+                  {uniqueCompanies.map((company) => (
+                    <option key={company} value={company}>
+                      {company}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sort by */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  Sort by
+                </label>
+                <select
+                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="default">Default Order</option>
+                  <option value="newest">Time Ago: Newest first</option>
+                  <option value="oldest">Time Ago: Oldest first</option>
+                  <option value="title_asc">Job Title: A-Z</option>
+                  <option value="title_desc">Job Title: Z-A</option>
+                  <option value="company_asc">Company: A-Z</option>
+                  <option value="company_desc">Company: Z-A</option>
+                </select>
+              </div>
             </div>
           </div>
         )}
