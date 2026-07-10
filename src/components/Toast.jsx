@@ -48,10 +48,18 @@ const STYLES = {
 export default function Toast({ toast, onClose }) {
   const [animate, setAnimate] = useState(false);
 
+  // Remount-friendly enter animation: wait one frame so CSS transition runs.
   useEffect(() => {
-    if (toast?.message) setAnimate(true);
-    else setAnimate(false);
-  }, [toast]);
+    if (!toast?.message) {
+      setAnimate(false);
+      return undefined;
+    }
+    setAnimate(false);
+    const raf = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setAnimate(true));
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [toast?.id, toast?.message]);
 
   if (!toast?.message) return null;
 
@@ -63,28 +71,28 @@ export default function Toast({ toast, onClose }) {
     <div
       role="status"
       aria-live="polite"
-      className={`pointer-events-auto fixed top-2 right-2 z-[3000] w-auto max-w-[min(18rem,calc(100vw-1rem))] overflow-hidden rounded-lg border shadow-md backdrop-blur-sm transition-all duration-200 ease-out sm:top-3 sm:right-3 ${s.shell} ${
+      className={`pointer-events-auto fixed top-3 right-3 z-[9999] w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden rounded-lg border shadow-lg backdrop-blur-sm transition-all duration-200 ease-out ${s.shell} ${
         animate
           ? "translate-y-0 opacity-100 scale-100"
-          : "-translate-y-1.5 opacity-0 scale-[0.97]"
+          : "-translate-y-2 opacity-0 scale-[0.96]"
       }`}
     >
       {/* thin accent bar */}
       <div className={`h-0.5 w-full ${s.bar}`} />
 
-      <div className="flex items-center gap-1.5 px-2 py-1.5">
+      <div className="flex items-start gap-2 px-2.5 py-2">
         <span
-          className={`inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${s.badge}`}
+          className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${s.badge}`}
           aria-hidden
         >
           {ICONS[kind]}
         </span>
 
-        <div className="min-w-0 flex-1 leading-none">
+        <div className="min-w-0 flex-1">
           <p className="text-[9px] font-bold uppercase tracking-wide opacity-70">
             {label}
           </p>
-          <p className="mt-0.5 max-w-full truncate text-[11px] font-medium leading-snug opacity-95">
+          <p className="mt-0.5 break-words text-[11px] font-medium leading-snug opacity-95">
             {toast.message}
           </p>
         </div>
@@ -92,14 +100,16 @@ export default function Toast({ toast, onClose }) {
         {onClose && (
           <button
             type="button"
-            className="inline-flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded text-current/40 transition hover:bg-black/5 hover:text-current/80 dark:hover:bg-white/10"
-            onClick={() => {
+            className="inline-flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded text-current/40 transition hover:bg-black/5 hover:text-current/80 dark:hover:bg-white/10"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
               setAnimate(false);
-              setTimeout(onClose, 150);
+              setTimeout(() => onClose(), 150);
             }}
             aria-label="Dismiss"
           >
-            <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>

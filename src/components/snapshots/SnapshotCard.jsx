@@ -14,6 +14,7 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
   const [fullData, setFullData] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const collectionName = item.collection_name || item.name;
   const isLiveStream =
@@ -25,7 +26,7 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
   useEffect(() => {
     if (open && !fullData && !loadingDetails) {
       setLoadingDetails(true);
-      fetch(`${API_BASE}/scrape-jsons/${item.id}`)
+      fetch(`${API_BASE}/scrape-jsons/${encodeURIComponent(item.id)}`)
         .then(async (res) => {
           if (!res.ok) {
             notifyError(
@@ -49,16 +50,34 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
     }
   }, [open, item.id, fullData, loadingDetails, dispatch]);
 
-  const handleDelete = (e) => {
+  // Reset confirm UI if this card is no longer the one being deleted
+  useEffect(() => {
+    if (!deleting) return;
+    setConfirmDelete(false);
+  }, [deleting]);
+
+  const handleDeleteClick = (e) => {
     e?.preventDefault();
     e?.stopPropagation();
-    if (!item.id) return;
-    if (
-      !window.confirm(
-        `Delete job collection from MongoDB?\n\n${collectionName || item.id}\n\nThis drops the collection and cannot be undone.`
-      )
-    )
+    if (!item?.id) {
+      notifyError(dispatch, "Missing collection id — cannot delete.");
       return;
+    }
+    if (deleting || opening) return;
+    setConfirmDelete(true);
+  };
+
+  const handleDeleteCancel = (e) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    setConfirmDelete(false);
+  };
+
+  const handleDeleteConfirm = (e) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    if (!item?.id || deleting) return;
+    setConfirmDelete(false);
     dispatch(deleteScrapeJson({ id: item.id, name: collectionName }));
   };
 
@@ -386,17 +405,41 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
             )}
           </button>
         </div>
-        <button
-          type="button"
-          className="btn-danger inline-flex items-center gap-1 py-1.5 px-3.5 rounded-xl font-bold cursor-pointer transition-all duration-200 active:scale-95"
-          disabled={deleting || opening}
-          onClick={handleDelete}
-        >
-          <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-          {deleting ? "Deleting…" : "Delete"}
-        </button>
+        {confirmDelete ? (
+          <div className="flex flex-wrap items-center gap-1.5 animate-[fade-up_0.15s_ease-out]">
+            <span className="text-[10px] font-bold text-rose-600 dark:text-rose-400 mr-0.5">
+              Delete forever?
+            </span>
+            <button
+              type="button"
+              className="btn-danger inline-flex items-center gap-1 py-1.5 px-3 rounded-xl font-bold cursor-pointer transition-all duration-200 active:scale-95"
+              disabled={deleting || opening}
+              onClick={handleDeleteConfirm}
+            >
+              {deleting ? "Deleting…" : "Yes, delete"}
+            </button>
+            <button
+              type="button"
+              className="btn-ghost inline-flex items-center py-1.5 px-3 rounded-xl text-xs font-bold cursor-pointer"
+              disabled={deleting}
+              onClick={handleDeleteCancel}
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="btn-danger inline-flex items-center gap-1 py-1.5 px-3.5 rounded-xl font-bold cursor-pointer transition-all duration-200 active:scale-95 relative z-10"
+            disabled={deleting || opening}
+            onClick={handleDeleteClick}
+          >
+            <svg className="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            {deleting ? "Deleting…" : "Delete"}
+          </button>
+        )}
       </div>
     </article>
   );

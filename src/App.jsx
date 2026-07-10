@@ -36,12 +36,14 @@ export default function App() {
   useEffect(() => {
     if (!toast) return;
     if (toastTimer.current) clearTimeout(toastTimer.current);
-    const ms = toast.type === "error" ? 3800 : 2600;
+    // Keep delete/success toasts long enough to read; errors a bit longer.
+    const ms =
+      toast.type === "error" ? 4200 : toast.type === "info" ? 2800 : 3200;
     toastTimer.current = setTimeout(() => dispatch(clearToast()), ms);
     return () => {
       if (toastTimer.current) clearTimeout(toastTimer.current);
     };
-  }, [toast, dispatch]);
+  }, [toast?.id, toast, dispatch]);
 
   useEffect(() => {
     // quiet: true — no success spam on first paint; failures still toast
@@ -86,7 +88,11 @@ export default function App() {
 
   return (
     <div className="app-shell relative flex min-h-[100dvh] w-full flex-1 flex-col">
-      <Toast toast={toast} onClose={() => dispatch(clearToast())} />
+      <Toast
+        key={toast?.id ?? "toast-empty"}
+        toast={toast}
+        onClose={() => dispatch(clearToast())}
+      />
 
       <Header />
 

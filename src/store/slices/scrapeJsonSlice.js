@@ -119,28 +119,37 @@ export const openJsonCard = createAsyncThunk(
 export const deleteScrapeJson = createAsyncThunk(
   "scrapeJson/delete",
   async ({ id, name }, { getState, dispatch, rejectWithValue }) => {
+    if (!id) {
+      const msg = "Missing collection id — cannot delete.";
+      notifyError(dispatch, msg);
+      return rejectWithValue(msg);
+    }
+
+    const label = name || id;
     try {
-      notifyInfo(dispatch, `Deleting collection ${name || id} from MongoDB...`);
-      const res = await fetch(`${API_BASE}/scrape-jsons/${id}`, {
-        method: "DELETE",
-      });
+      notifyInfo(dispatch, `Deleting “${label}”…`);
+      const res = await fetch(
+        `${API_BASE}/scrape-jsons/${encodeURIComponent(id)}`,
+        { method: "DELETE" }
+      );
       const data = await parseJson(res);
       if (!res.ok) {
         const msg = apiError(data, "Delete failed");
         notifyError(dispatch, msg);
         return rejectWithValue(msg);
       }
-      const remaining = data.list || [];
-      notifySuccess(
-        dispatch,
-        `Deleted collection ${name || id} from database.`
-      );
+
+      const remaining = Array.isArray(data.list)
+        ? data.list
+        : getState().scrapeJson.list.filter((item) => item.id !== id);
+
       const { selectedJsonId, openCardId } = getState().scrapeJson;
-      if (selectedJsonId === id || openCardId === id) {
-        dispatch(clearActiveJson());
-      }
+      const clearActive = selectedJsonId === id || openCardId === id;
+
       dispatch(setBackendOnline(true));
-      return remaining;
+      notifySuccess(dispatch, `Deleted “${label}” from database.`);
+
+      return { list: remaining, clearActive, deletedId: id };
     } catch (err) {
       console.error(err);
       const msg = "Failed to delete collection from database.";
@@ -212,11 +221,25 @@ const scrapeJsonSlice = createSlice({
         state.openingId = null;
       })
       .addCase(deleteScrapeJson.pending, (state, action) => {
-        state.deletingId = action.meta.arg.id;
+        state.deletingId = action.meta.arg?.id || null;
       })
       .addCase(deleteScrapeJson.fulfilled, (state, action) => {
         state.deletingId = null;
-        state.list = action.payload;
+        const payload = action.payload;
+        const list = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload?.list)
+            ? payload.list
+            : state.list.filter((item) => item.id !== payload?.deletedId);
+        state.list = list;
+        if (payload?.clearActive) {
+          state.selectedJsonId = null;
+          state.openCardId = null;
+          state.activeJsonMeta = null;
+          state.activeJobs = [];
+          state.view = "list";
+          state.openingId = null;
+        }
       })
       .addCase(deleteScrapeJson.rejected, (state) => {
         state.deletingId = null;

@@ -39,10 +39,11 @@ const uiSlice = createSlice({
         type === "error" || type === "info" || type === "success"
           ? type
           : "success";
+      // Unique id every time so Toast remounts (key) and animation re-runs.
       state.toast = {
         message: String(message || ""),
         type: kind,
-        id: Date.now(),
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       };
     },
     clearToast(state) {
