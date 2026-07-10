@@ -65,6 +65,10 @@ export default function JobsDashboardPage() {
   const [sortBy, setSortBy] = useState("default");
   const [filterCity, setFilterCity] = useState("all");
   const [filterCompany, setFilterCompany] = useState("all");
+  const [filterEasyApply, setFilterEasyApply] = useState("all");
+  const [filterWorkplace, setFilterWorkplace] = useState("all");
+  const [filterJobType, setFilterJobType] = useState("all");
+  const [filterExperience, setFilterExperience] = useState("all");
 
   const queriesList = useMemo(() => {
     if (!activeJsonMeta?.search_term) return [];
@@ -84,6 +88,10 @@ export default function JobsDashboardPage() {
     setSortBy("default");
     setFilterCity("all");
     setFilterCompany("all");
+    setFilterEasyApply("all");
+    setFilterWorkplace("all");
+    setFilterJobType("all");
+    setFilterExperience("all");
   }, [selectedJsonId]);
 
   const isCardOpen = (key) => openCardId === key;
@@ -143,6 +151,28 @@ export default function JobsDashboardPage() {
       });
     }
 
+    if (filterEasyApply === "easy_apply") {
+      result = result.filter((job) => job.is_easy_apply);
+    }
+
+    if (filterWorkplace !== "all") {
+      result = result.filter((job) => {
+        return (job.workplace_type || "").trim().toLowerCase() === filterWorkplace.toLowerCase();
+      });
+    }
+
+    if (filterJobType !== "all") {
+      result = result.filter((job) => {
+        return (job.job_type || "").trim().toLowerCase() === filterJobType.toLowerCase();
+      });
+    }
+
+    if (filterExperience !== "all") {
+      result = result.filter((job) => {
+        return (job.experience_level || "").trim().toLowerCase() === filterExperience.toLowerCase();
+      });
+    }
+
     if (sortBy === "newest") {
       result.sort((a, b) => parseTimeToMinutes(a.time_ago) - parseTimeToMinutes(b.time_ago));
     } else if (sortBy === "oldest") {
@@ -158,7 +188,17 @@ export default function JobsDashboardPage() {
     }
 
     return result;
-  }, [activeJobs, search, filterCity, filterCompany, sortBy]);
+  }, [
+    activeJobs,
+    search,
+    filterCity,
+    filterCompany,
+    filterEasyApply,
+    filterWorkplace,
+    filterJobType,
+    filterExperience,
+    sortBy,
+  ]);
 
   const liveStreamsCount = useMemo(() => {
     return jobCollections.filter(
@@ -361,14 +401,14 @@ export default function JobsDashboardPage() {
             </div>
 
             {/* Bottom row: filters and sort options */}
-            <div className="grid grid-cols-1 gap-3 border-t border-slate-100/60 pt-3 dark:border-slate-800/40 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 border-t border-slate-100/60 pt-3 dark:border-slate-800/40 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
               {/* Filter by City */}
               <div className="flex flex-col gap-1">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                  Filter by Location
+                  Location
                 </label>
                 <select
-                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer truncate"
                   value={filterCity}
                   onChange={(e) => setFilterCity(e.target.value)}
                 >
@@ -384,10 +424,10 @@ export default function JobsDashboardPage() {
               {/* Filter by Company */}
               <div className="flex flex-col gap-1">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                  Filter by Company
+                  Company
                 </label>
                 <select
-                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer truncate"
                   value={filterCompany}
                   onChange={(e) => setFilterCompany(e.target.value)}
                 >
@@ -397,6 +437,74 @@ export default function JobsDashboardPage() {
                       {company}
                     </option>
                   ))}
+                </select>
+              </div>
+
+              {/* Easy Apply */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  Easy Apply
+                </label>
+                <select
+                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  value={filterEasyApply}
+                  onChange={(e) => setFilterEasyApply(e.target.value)}
+                >
+                  <option value="all">All Jobs</option>
+                  <option value="easy_apply">⚡ Easy Apply Only</option>
+                </select>
+              </div>
+
+              {/* Workplace Type */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  Workplace
+                </label>
+                <select
+                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  value={filterWorkplace}
+                  onChange={(e) => setFilterWorkplace(e.target.value)}
+                >
+                  <option value="all">All Workplaces</option>
+                  <option value="remote">🏠 Remote Only</option>
+                  <option value="hybrid">🏢 Hybrid Only</option>
+                  <option value="onsite">📍 Onsite Only</option>
+                </select>
+              </div>
+
+              {/* Job Type */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  Job Type
+                </label>
+                <select
+                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  value={filterJobType}
+                  onChange={(e) => setFilterJobType(e.target.value)}
+                >
+                  <option value="all">All Types</option>
+                  <option value="full-time">Full-time</option>
+                  <option value="part-time">Part-time</option>
+                  <option value="contract">Contract</option>
+                  <option value="freelance">Freelance</option>
+                  <option value="internship">Internship</option>
+                </select>
+              </div>
+
+              {/* Experience Level */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  Experience
+                </label>
+                <select
+                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  value={filterExperience}
+                  onChange={(e) => setFilterExperience(e.target.value)}
+                >
+                  <option value="all">All Levels</option>
+                  <option value="fresher">🎓 Fresher</option>
+                  <option value="experienced">📈 Experienced</option>
+                  <option value="executive">👑 Executive</option>
                 </select>
               </div>
 
