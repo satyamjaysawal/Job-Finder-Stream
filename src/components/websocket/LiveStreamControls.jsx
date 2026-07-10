@@ -43,6 +43,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
   const [target, setTarget] = useState("");
   const [resultsPer, setResultsPer] = useState("");
   const [hoursOld, setHoursOld] = useState("");
+  const [largeSelectionConfirm, setLargeSelectionConfirm] = useState(null);
 
   // Track whether form was hydrated from DB at least once
   const hydratedKeyRef = useRef("");
@@ -256,16 +257,6 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
             ? `countries [${finalCountries.join(", ")}]`
             : "GLOBAL (no city/country filter)";
 
-    if (comboCount > 30) {
-      const ok = window.confirm(
-        `You selected ${finalQueries.length} queries × ${locationSlots} location(s) = ${comboCount} combos.\n` +
-          `Geo: ${geoLabel}\n\n` +
-          `Caps: target≤${strictTarget}, hits/query≤${strictResultsPer}, hours_old=${strictHoursOld}.\n\n` +
-          `Continue with this large selection?`
-      );
-      if (!ok) return;
-    }
-
     let strictMinExp = null;
     let strictMaxExp = null;
     if (minExp !== "") {
@@ -285,7 +276,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
       return;
     }
 
-    onStartStream({
+    const streamParams = {
       search: finalQueries.join(","),
       // Empty string = global (backend must not substitute Hyderabad/India)
       city: finalCities.join(","),
@@ -302,7 +293,23 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
       strict_caps: true,
       combo_count: comboCount,
       geo_label: geoLabel,
-    });
+    };
+
+    if (comboCount > 30) {
+      setLargeSelectionConfirm({
+        comboCount,
+        queriesCount: finalQueries.length,
+        locationSlots,
+        geoLabel,
+        strictTarget,
+        strictResultsPer,
+        strictHoursOld,
+        params: streamParams,
+      });
+      return;
+    }
+
+    onStartStream(streamParams);
   };
 
   const sectionLabel =
@@ -778,6 +785,70 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
           )}
         </button>
       </form>
+
+      {largeSelectionConfirm && (
+        <div className="fixed inset-0 z-[4000] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-[fade-in_0.2s_ease-out]">
+          <div className="w-full max-w-md overflow-hidden rounded-2xl border border-slate-200/50 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-950 p-6 animate-[scale-up_0.2s_cubic-bezier(0.16,1,0.3,1)]">
+            <div className="flex items-start gap-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.3c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  Large Selection Warning
+                </h3>
+                <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  You selected <strong className="font-semibold text-slate-750 dark:text-slate-200">{largeSelectionConfirm.queriesCount} queries × {largeSelectionConfirm.locationSlots} location(s)</strong> resulting in <span className="font-bold text-indigo-650 dark:text-indigo-400">{largeSelectionConfirm.comboCount} combinations</span>.
+                </p>
+                <div className="mt-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 p-3 text-[11px] font-semibold text-slate-655 dark:text-slate-350 space-y-1.5 border border-slate-100 dark:border-slate-800/60">
+                  <div className="flex justify-between gap-2">
+                    <span className="opacity-70">Geography:</span>
+                    <span className="truncate max-w-[200px]" title={largeSelectionConfirm.geoLabel}>
+                      {largeSelectionConfirm.geoLabel}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="opacity-70">Target Cap:</span>
+                    <span>≤{largeSelectionConfirm.strictTarget} jobs</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="opacity-70">Hits/Query:</span>
+                    <span>≤{largeSelectionConfirm.strictResultsPer}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="opacity-70">Recency:</span>
+                    <span>{largeSelectionConfirm.strictHoursOld}h limit</span>
+                  </div>
+                </div>
+                <p className="mt-4 text-xs font-semibold text-slate-600 dark:text-slate-300">
+                  Continue with this large selection?
+                </p>
+              </div>
+            </div>
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                className="btn-ghost py-2 px-4 cursor-pointer text-xs"
+                onClick={() => setLargeSelectionConfirm(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn-primary py-2 px-4 cursor-pointer text-xs"
+                onClick={() => {
+                  onStartStream(largeSelectionConfirm.params);
+                  setLargeSelectionConfirm(null);
+                }}
+              >
+                Yes, Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
