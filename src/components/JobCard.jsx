@@ -12,26 +12,64 @@ export default function JobCard({ job }) {
     <article className="panel group flex min-h-[196px] w-full flex-col justify-between p-5.5 transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/[0.03] dark:hover:border-indigo-400/30 dark:hover:shadow-black/30 glow-container">
       <div>
         {/* Top badges bar */}
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 select-none">
-          <div className="flex flex-wrap gap-1.5">
-            <span className="chip-accent px-2.5 py-0.5 rounded-full border border-indigo-200/40 bg-indigo-50/60 dark:border-indigo-900/40 dark:bg-indigo-950/40 dark:text-indigo-400 font-extrabold text-[9.5px]">
-              {categoryLabel}
-            </span>
-            {(job.min_exp !== undefined && job.min_exp !== null || job.max_exp !== undefined && job.max_exp !== null) && (
-              <span className="chip px-2.5 py-0.5 rounded-full border border-slate-200 bg-slate-100/60 dark:border-slate-800 dark:bg-slate-900/50 font-extrabold text-[9.5px] text-slate-500 dark:text-slate-400">
-                {job.min_exp !== null && job.max_exp !== null && job.min_exp !== undefined && job.max_exp !== undefined
-                  ? `${job.min_exp}–${job.max_exp} yrs`
-                  : job.min_exp !== null && job.min_exp !== undefined
-                    ? `${job.min_exp}+ yrs`
-                    : `${job.max_exp} yrs max`}
+        <div className="mb-4 flex flex-col gap-2 select-none">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap gap-1.5">
+              <span className="chip-accent px-2.5 py-0.5 rounded-full border border-indigo-200/40 bg-indigo-50/60 dark:border-indigo-900/40 dark:bg-indigo-950/40 dark:text-indigo-400 font-extrabold text-[9.5px]">
+                {categoryLabel}
+              </span>
+              {(job.min_exp !== undefined && job.min_exp !== null || job.max_exp !== undefined && job.max_exp !== null) && (
+                <span className="chip px-2.5 py-0.5 rounded-full border border-slate-200 bg-slate-100/60 dark:border-slate-800 dark:bg-slate-900/50 font-extrabold text-[9.5px] text-slate-500 dark:text-slate-400">
+                  {job.min_exp !== null && job.max_exp !== null && job.min_exp !== undefined && job.max_exp !== undefined
+                    ? `${job.min_exp}–${job.max_exp} yrs`
+                    : job.min_exp !== null && job.min_exp !== undefined
+                      ? `${job.min_exp}+ yrs`
+                      : `${job.max_exp} yrs max`}
+                </span>
+              )}
+            </div>
+            {job.time_ago && (
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">
+                {job.time_ago}
               </span>
             )}
           </div>
-          {job.time_ago && (
-            <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">
-              {job.time_ago}
-            </span>
-          )}
+
+          {/* Dynamic Tags Row */}
+          <div className="flex flex-wrap gap-1.5 mt-0.5">
+            {job.is_easy_apply && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-emerald-250/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-[9px] uppercase tracking-wider select-none animate-[pulse-glow_2s_infinite]">
+                ⚡ Easy Apply
+              </span>
+            )}
+            {job.workplace_type && (
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border font-extrabold text-[9px] uppercase tracking-wider select-none ${
+                job.workplace_type === "remote"
+                  ? "border-sky-200/30 bg-sky-500/10 text-sky-600 dark:text-sky-400"
+                  : job.workplace_type === "hybrid"
+                    ? "border-amber-200/30 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                    : "border-slate-200/40 bg-slate-100/40 text-slate-500 dark:text-slate-400"
+              }`}>
+                {job.workplace_type === "remote" ? "🏠 Remote" : job.workplace_type === "hybrid" ? "🏢 Hybrid" : "📍 Onsite"}
+              </span>
+            )}
+            {job.job_type && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-violet-200/30 bg-violet-500/10 text-violet-600 dark:text-violet-400 font-extrabold text-[9px] uppercase tracking-wider select-none">
+                💼 {job.job_type}
+              </span>
+            )}
+            {job.experience_level && (
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border font-extrabold text-[9px] uppercase tracking-wider select-none ${
+                job.experience_level === "fresher"
+                  ? "border-emerald-200/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                  : job.experience_level === "executive"
+                    ? "border-purple-200/30 bg-purple-500/10 text-purple-600 dark:text-purple-400"
+                    : "border-indigo-200/30 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400"
+              }`}>
+                {job.experience_level === "fresher" ? "🎓 Fresher" : job.experience_level === "executive" ? "👑 Executive" : "📈 Experienced"}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Title & Company */}
