@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { fetchConfig } from "../../store/slices/configSlice";
+import { notifyError } from "../../store/notify";
 
 /**
  * Stream parameters are hydrated from MongoDB `config` (via Redux).
@@ -209,7 +210,8 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
     const finalCountries = countriesList;
 
     if (finalQueries.length === 0) {
-      alert(
+      notifyError(
+        dispatch,
         "Select at least one search query (city and country are optional — leave empty for global search)."
       );
       return;
@@ -279,7 +281,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
       strictMaxExp != null &&
       strictMinExp > strictMaxExp
     ) {
-      alert("Min experience cannot be greater than max experience.");
+      notifyError(dispatch, "Min experience cannot be greater than max experience.");
       return;
     }
 

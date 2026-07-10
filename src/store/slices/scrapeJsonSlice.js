@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { API_BASE, apiError, parseJson } from "../api";
 import { setBackendOnline } from "./uiSlice";
-import { notifyError, notifySuccess } from "../notify";
+import { notifyError, notifySuccess, notifyInfo } from "../notify";
 
 function normalizeJobs(list, sourceId = null, sourceName = null) {
   if (!Array.isArray(list)) return [];
@@ -120,6 +120,7 @@ export const deleteScrapeJson = createAsyncThunk(
   "scrapeJson/delete",
   async ({ id, name }, { getState, dispatch, rejectWithValue }) => {
     try {
+      notifyInfo(dispatch, `Deleting collection ${name || id} from MongoDB...`);
       const res = await fetch(`${API_BASE}/scrape-jsons/${id}`, {
         method: "DELETE",
       });
