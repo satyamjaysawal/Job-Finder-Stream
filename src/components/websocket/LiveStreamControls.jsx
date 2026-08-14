@@ -45,6 +45,18 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
   const [hoursOld, setHoursOld] = useState("");
   const [largeSelectionConfirm, setLargeSelectionConfirm] = useState(null);
 
+  const [expandQueries, setExpandQueries] = useState(false);
+  const [expandCities, setExpandCities] = useState(false);
+  const [expandCountries, setExpandCountries] = useState(false);
+
+  const allExpanded = expandQueries && expandCities && expandCountries;
+  const toggleExpandAll = () => {
+    const nextState = !allExpanded;
+    setExpandQueries(nextState);
+    setExpandCities(nextState);
+    setExpandCountries(nextState);
+  };
+
   // Track whether form was hydrated from DB at least once
   const hydratedKeyRef = useRef("");
   const userTouchedRef = useRef(false);
@@ -58,9 +70,8 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
     const cs = Array.isArray(cfg.cities) ? cfg.cities : [];
     const cos = Array.isArray(cfg.countries) ? cfg.countries : [];
 
-    // Default: 1 query; city & country OPTIONAL (empty = global search).
-    // User selects city/country only when they want geo filters.
-    setSelectedQueries(qs.length ? [qs[0]] : []);
+    // Default: empty selection (0 selected). User selects the queries they want to run.
+    setSelectedQueries([]);
     setSelectedCitiesList([]);
     setSelectedCountries([]);
     void cs;
@@ -199,14 +210,7 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
       countriesList.push(customCountry.trim());
     }
 
-    // Queries: fall back to config if none selected.
-    // City & country: OPTIONAL — only what user picked; empty = global search.
-    const finalQueries =
-      queriesList.length > 0
-        ? queriesList
-        : searchQueries.length
-          ? [searchQueries[0]]
-          : [];
+    const finalQueries = queriesList;
     const finalCities = citiesList;
     const finalCountries = countriesList;
 
@@ -370,32 +374,56 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
           >
             Reset
           </button>
+          <button
+            type="button"
+            className="btn-ghost rounded-lg px-2 py-1 text-[10px] font-bold cursor-pointer flex items-center gap-1 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-800/50 bg-indigo-50/40 dark:bg-indigo-950/30"
+            onClick={toggleExpandAll}
+            title="Expand or collapse all chip lists"
+          >
+            <svg className="h-3 w-3 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d={allExpanded ? "M9 9L4 4m0 0h5m-5 0v5m11 0V4m0 0h-5m5 0l-5 5M9 15l-5 5m0 0h5m-5 0v-5m11 5v-5m0 5h-5m5 0l-5-5" : "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"} />
+            </svg>
+            {allExpanded ? "Collapse All" : "Expand All"}
+          </button>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Search queries pills */}
         <div>
-          <div className="mb-2 flex items-center justify-between">
+          <div className="mb-2 flex items-center justify-between gap-2">
             <span className={sectionLabel}>
               Queries{" "}
               <span className="font-normal normal-case text-slate-400">
                 ({selectedQueries.length}/{searchQueries.length} from DB)
               </span>
             </span>
-            <button
-              type="button"
-              className="cursor-pointer text-[10px] font-bold text-indigo-600 hover:underline dark:text-indigo-400"
-              onClick={selectAllQueries}
-              disabled={activeSession || !searchQueries.length}
-            >
-              {selectedQueries.length === searchQueries.length &&
-              searchQueries.length > 0
-                ? "Deselect All"
-                : "Select All"}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setExpandQueries(!expandQueries)}
+                className="flex items-center gap-1 rounded-md border border-slate-200/80 bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 transition-colors hover:bg-slate-200 hover:border-slate-300 dark:border-slate-700/80 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer shadow-2xs"
+                title={expandQueries ? "Collapse query list" : "Expand query list to show all options"}
+              >
+                <svg className="h-3 w-3 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d={expandQueries ? "M9 9L4 4m0 0h5m-5 0v5m11 0V4m0 0h-5m5 0l-5 5M9 15l-5 5m0 0h5m-5 0v-5m11 5v-5m0 5h-5m5 0l-5-5" : "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"} />
+                </svg>
+                <span>{expandQueries ? "Collapse" : "Expand"}</span>
+              </button>
+              <button
+                type="button"
+                className="cursor-pointer text-[10px] font-bold text-indigo-600 hover:underline dark:text-indigo-400"
+                onClick={selectAllQueries}
+                disabled={activeSession || !searchQueries.length}
+              >
+                {selectedQueries.length === searchQueries.length &&
+                searchQueries.length > 0
+                  ? "Deselect All"
+                  : "Select All"}
+              </button>
+            </div>
           </div>
-          <div className={wrapperTagsClass}>
+          <div className={`${wrapperTagsClass} ${expandQueries ? "max-h-none overflow-visible border-indigo-500/30 bg-indigo-50/10 dark:bg-indigo-950/10" : ""}`}>
             {configLoading && !searchQueries.length && (
               <span className="px-2 py-1 text-xs text-slate-400">
                 Fetching queries from config…
@@ -457,25 +485,38 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
 
         {/* Cities pills */}
         <div>
-          <div className="mb-2 flex items-center justify-between">
+          <div className="mb-2 flex items-center justify-between gap-2">
             <span className={sectionLabel}>
               Cities{" "}
               <span className="font-normal normal-case text-slate-400">
                 optional · empty = global · ({selectedCitiesList.length}/{cities.length})
               </span>
             </span>
-            <button
-              type="button"
-              className="cursor-pointer text-[10px] font-bold text-indigo-600 hover:underline dark:text-indigo-400"
-              onClick={selectAllCities}
-              disabled={activeSession || !cities.length}
-            >
-              {selectedCitiesList.length === cities.length && cities.length > 0
-                ? "Deselect All"
-                : "Select All"}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setExpandCities(!expandCities)}
+                className="flex items-center gap-1 rounded-md border border-slate-200/80 bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 transition-colors hover:bg-slate-200 hover:border-slate-300 dark:border-slate-700/80 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer shadow-2xs"
+                title={expandCities ? "Collapse city list" : "Expand city list to show all options"}
+              >
+                <svg className="h-3 w-3 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d={expandCities ? "M9 9L4 4m0 0h5m-5 0v5m11 0V4m0 0h-5m5 0l-5 5M9 15l-5 5m0 0h5m-5 0v-5m11 5v-5m0 5h-5m5 0l-5-5" : "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"} />
+                </svg>
+                <span>{expandCities ? "Collapse" : "Expand"}</span>
+              </button>
+              <button
+                type="button"
+                className="cursor-pointer text-[10px] font-bold text-indigo-600 hover:underline dark:text-indigo-400"
+                onClick={selectAllCities}
+                disabled={activeSession || !cities.length}
+              >
+                {selectedCitiesList.length === cities.length && cities.length > 0
+                  ? "Deselect All"
+                  : "Select All"}
+              </button>
+            </div>
           </div>
-          <div className={wrapperTagsClass}>
+          <div className={`${wrapperTagsClass} ${expandCities ? "max-h-none overflow-visible border-indigo-500/30 bg-indigo-50/10 dark:bg-indigo-950/10" : ""}`}>
             {configLoading && !cities.length && (
               <span className="px-2 py-1 text-xs text-slate-400">
                 Fetching cities from config…
@@ -537,26 +578,39 @@ export default function LiveStreamControls({ activeSession, onStartStream }) {
 
         {/* Countries pills */}
         <div>
-          <div className="mb-2 flex items-center justify-between">
+          <div className="mb-2 flex items-center justify-between gap-2">
             <span className={sectionLabel}>
               Countries{" "}
               <span className="font-normal normal-case text-slate-400">
                 optional · empty = global · ({selectedCountries.length}/{countries.length})
               </span>
             </span>
-            <button
-              type="button"
-              className="cursor-pointer text-[10px] font-bold text-indigo-600 hover:underline dark:text-indigo-400"
-              onClick={selectAllCountries}
-              disabled={activeSession || !countries.length}
-            >
-              {selectedCountries.length === countries.length &&
-              countries.length > 0
-                ? "Deselect All"
-                : "Select All"}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setExpandCountries(!expandCountries)}
+                className="flex items-center gap-1 rounded-md border border-slate-200/80 bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 transition-colors hover:bg-slate-200 hover:border-slate-300 dark:border-slate-700/80 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer shadow-2xs"
+                title={expandCountries ? "Collapse country list" : "Expand country list to show all options"}
+              >
+                <svg className="h-3 w-3 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d={expandCountries ? "M9 9L4 4m0 0h5m-5 0v5m11 0V4m0 0h-5m5 0l-5 5M9 15l-5 5m0 0h5m-5 0v-5m11 5v-5m0 5h-5m5 0l-5-5" : "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"} />
+                </svg>
+                <span>{expandCountries ? "Collapse" : "Expand"}</span>
+              </button>
+              <button
+                type="button"
+                className="cursor-pointer text-[10px] font-bold text-indigo-600 hover:underline dark:text-indigo-400"
+                onClick={selectAllCountries}
+                disabled={activeSession || !countries.length}
+              >
+                {selectedCountries.length === countries.length &&
+                countries.length > 0
+                  ? "Deselect All"
+                  : "Select All"}
+              </button>
+            </div>
           </div>
-          <div className={wrapperTagsClass}>
+          <div className={`${wrapperTagsClass} ${expandCountries ? "max-h-none overflow-visible border-indigo-500/30 bg-indigo-50/10 dark:bg-indigo-950/10" : ""}`}>
             {configLoading && !countries.length && (
               <span className="px-2 py-1 text-xs text-slate-400">
                 Fetching countries from config…

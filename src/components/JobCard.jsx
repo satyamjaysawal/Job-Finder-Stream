@@ -69,6 +69,19 @@ export default function JobCard({ job }) {
                 {job.experience_level === "fresher" ? "🎓 Fresher" : job.experience_level === "executive" ? "👑 Executive" : "📈 Experienced"}
               </span>
             )}
+            {(job.has_hr_contact || job.hr_contact || job.hr_name) && (
+              <span
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-pink-200/30 bg-pink-500/10 text-pink-600 dark:text-pink-400 font-extrabold text-[9px] uppercase tracking-wider select-none truncate max-w-[140px]"
+                title={job.hr_contact || job.hr_name || "HR Contact Available"}
+              >
+                ✉️ {job.hr_name ? `HR: ${job.hr_name}` : job.hr_contact ? `HR: ${job.hr_contact}` : "HR Contact"}
+              </span>
+            )}
+            {job.is_hr_role && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border border-rose-200/30 bg-rose-500/10 text-rose-600 dark:text-rose-400 font-extrabold text-[9px] uppercase tracking-wider select-none">
+                👔 HR Role
+              </span>
+            )}
           </div>
         </div>
 

@@ -69,6 +69,8 @@ export default function JobsDashboardPage() {
   const [filterWorkplace, setFilterWorkplace] = useState("all");
   const [filterJobType, setFilterJobType] = useState("all");
   const [filterExperience, setFilterExperience] = useState("all");
+  const [filterHrContact, setFilterHrContact] = useState("all");
+  const [filterHrRole, setFilterHrRole] = useState("all");
 
   const queriesList = useMemo(() => {
     if (!activeJsonMeta?.search_term) return [];
@@ -92,6 +94,8 @@ export default function JobsDashboardPage() {
     setFilterWorkplace("all");
     setFilterJobType("all");
     setFilterExperience("all");
+    setFilterHrContact("all");
+    setFilterHrRole("all");
   }, [selectedJsonId]);
 
   const isCardOpen = (key) => openCardId === key;
@@ -106,6 +110,8 @@ export default function JobsDashboardPage() {
       filterWorkplace !== "all" ||
       filterJobType !== "all" ||
       filterExperience !== "all" ||
+      filterHrContact !== "all" ||
+      filterHrRole !== "all" ||
       sortBy !== "default"
     );
   }, [
@@ -116,6 +122,8 @@ export default function JobsDashboardPage() {
     filterWorkplace,
     filterJobType,
     filterExperience,
+    filterHrContact,
+    filterHrRole,
     sortBy,
   ]);
 
@@ -127,6 +135,8 @@ export default function JobsDashboardPage() {
     setFilterWorkplace("all");
     setFilterJobType("all");
     setFilterExperience("all");
+    setFilterHrContact("all");
+    setFilterHrRole("all");
     setSortBy("default");
   };
 
@@ -206,6 +216,25 @@ export default function JobsDashboardPage() {
       });
     }
 
+    if (filterHrContact === "has_contact") {
+      result = result.filter((job) => job.has_hr_contact || job.hr_contact || job.hr_name);
+    } else if (filterHrContact === "no_contact") {
+      result = result.filter((job) => !job.has_hr_contact && !job.hr_contact && !job.hr_name);
+    }
+
+    if (filterHrRole === "hr_only") {
+      // Show all HR-related roles: generalist, recruiter, talent acquisition, payroll etc.
+      result = result.filter((job) => job.is_hr_role && job.hr_role_category !== "non_hr");
+    } else if (filterHrRole === "tech_recruiter") {
+      result = result.filter((job) => job.hr_role_category === "technical_recruiter");
+    } else if (filterHrRole === "talent_acquisition") {
+      result = result.filter((job) => job.hr_role_category === "talent_acquisition");
+    } else if (filterHrRole === "hr_generalist") {
+      result = result.filter((job) => job.hr_role_category === "hr_generalist");
+    } else if (filterHrRole === "hr_payroll") {
+      result = result.filter((job) => job.hr_role_category === "hr_payroll");
+    }
+
     if (sortBy === "newest") {
       result.sort((a, b) => parseTimeToMinutes(a.time_ago) - parseTimeToMinutes(b.time_ago));
     } else if (sortBy === "oldest") {
@@ -230,6 +259,8 @@ export default function JobsDashboardPage() {
     filterWorkplace,
     filterJobType,
     filterExperience,
+    filterHrContact,
+    filterHrRole,
     sortBy,
   ]);
 
@@ -448,7 +479,7 @@ export default function JobsDashboardPage() {
             </div>
 
             {/* Bottom row: filters and sort options */}
-            <div className="grid grid-cols-1 gap-3 border-t border-slate-100/60 pt-3 dark:border-slate-800/40 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+            <div className="grid grid-cols-1 gap-3 border-t border-slate-100/60 pt-3 dark:border-slate-800/40 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-9">
               {/* Filter by City */}
               <div className="flex flex-col gap-1">
                 <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
@@ -552,6 +583,41 @@ export default function JobsDashboardPage() {
                   <option value="fresher">🎓 Fresher</option>
                   <option value="experienced">📈 Experienced</option>
                   <option value="executive">👑 Executive</option>
+                </select>
+              </div>
+
+              {/* HR Contact Filter */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  HR Contact
+                </label>
+                <select
+                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  value={filterHrContact}
+                  onChange={(e) => setFilterHrContact(e.target.value)}
+                >
+                  <option value="all">All HR Status</option>
+                  <option value="has_contact">✉️ HR Contact Available</option>
+                  <option value="no_contact">🏢 No HR Contact</option>
+                </select>
+              </div>
+
+              {/* HR Role Category Filter */}
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  HR Role
+                </label>
+                <select
+                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  value={filterHrRole}
+                  onChange={(e) => setFilterHrRole(e.target.value)}
+                >
+                  <option value="all">All Roles</option>
+                  <option value="hr_only">👤 All HR / Recruiter Roles</option>
+                  <option value="tech_recruiter">🎯 Technical Recruiter</option>
+                  <option value="talent_acquisition">🔍 Talent Acquisition</option>
+                  <option value="hr_generalist">📋 HR Generalist</option>
+                  <option value="hr_payroll">💰 HR Payroll / Compensation</option>
                 </select>
               </div>
 

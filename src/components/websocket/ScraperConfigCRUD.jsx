@@ -26,6 +26,7 @@ function ConfigListPanel({
   const [newValue, setNewValue] = useState("");
   const [editing, setEditing] = useState(null);
   const [editValue, setEditValue] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const tagClass =
     "inline-flex items-center gap-1.5 rounded-xl border border-slate-200/60 bg-white/60 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-350 dark:hover:border-slate-700 backdrop-blur-sm";
@@ -46,17 +47,28 @@ function ConfigListPanel({
   return (
     <div className="panel-muted flex flex-col justify-between space-y-3.5 p-4">
       <div className="space-y-2">
-        <div className="flex items-baseline justify-between gap-2">
+        <div className="flex items-center justify-between gap-2">
           <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
             {title} ({items?.length || 0})
           </h4>
+          <button
+            type="button"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex items-center gap-1 rounded-md border border-slate-200/80 bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600 transition-colors hover:bg-slate-200 hover:border-slate-300 dark:border-slate-700/80 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer shadow-2xs"
+            title={isExpanded ? "Collapse list view" : "Expand list view to show all items"}
+          >
+            <svg className="h-3 w-3 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d={isExpanded ? "M9 9L4 4m0 0h5m-5 0v5m11 0V4m0 0h-5m5 0l-5 5M9 15l-5 5m0 0h5m-5 0v-5m11 5v-5m0 5h-5m5 0l-5-5" : "M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"} />
+            </svg>
+            <span>{isExpanded ? "Collapse" : "Expand"}</span>
+          </button>
         </div>
         {hint && (
           <p className="text-[10px] leading-snug text-slate-400 dark:text-slate-500">
             {hint}
           </p>
         )}
-        <div className="flex max-h-40 flex-wrap gap-2 overflow-y-auto pr-1 scrollbar-thin">
+        <div className={`flex flex-wrap gap-2 overflow-y-auto pr-1 scrollbar-thin transition-all duration-300 ${isExpanded ? "max-h-none overflow-visible" : "max-h-40"}`}>
           {(items || []).length === 0 && (
             <span className="text-xs text-slate-400">No items yet — add below.</span>
           )}
