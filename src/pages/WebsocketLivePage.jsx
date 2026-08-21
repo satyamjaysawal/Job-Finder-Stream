@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { notifyError, notifySuccess, notifyInfo } from "../store/notify";
 import { fetchConfig } from "../store/slices/configSlice";
 import { getWsUrl } from "../store/api";
@@ -11,6 +11,7 @@ import ScraperConfigCRUD from "../components/websocket/ScraperConfigCRUD";
 
 export default function WebsocketLivePage() {
   const dispatch = useAppDispatch();
+  const isAdmin = useAppSelector((s) => s.auth.user?.role === "admin");
   const [wsStatus, setWsStatus] = useState("disconnected");
   const [logs, setLogs] = useState([]);
   const [streamedJobs, setStreamedJobs] = useState([]);
@@ -247,13 +248,14 @@ export default function WebsocketLivePage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
+          {isAdmin && (
           <button
             type="button"
             className={`${
               showScraperConfig
                 ? "btn-primary"
                 : "btn-ghost"
-            } text-xs font-bold inline-flex items-center gap-1.5 rounded-xl cursor-pointer active:scale-95 duration-200 shadow-sm`}
+            } text-xs font-bold inline-flex items-center gap-1.5 rounded-xl cursor-pointer active:scale-95 duration-200`}
             onClick={() => setShowScraperConfig((v) => !v)}
             aria-expanded={showScraperConfig}
           >
@@ -263,6 +265,7 @@ export default function WebsocketLivePage() {
             </svg>
             {showScraperConfig ? "Hide Config" : "Configuration"}
           </button>
+          )}
           
           <button
             type="button"
@@ -313,14 +316,14 @@ export default function WebsocketLivePage() {
         </div>
       </div>
 
-      {showScraperConfig && (
+      {isAdmin && showScraperConfig && (
         <div className="mb-6 w-full animate-[fade-up_0.3s_cubic-bezier(0.16,1,0.3,1)_forwards]">
           <ScraperConfigCRUD onClose={() => setShowScraperConfig(false)} />
         </div>
       )}
 
       {/* Mobile Tab switcher (only visible below lg breakpoint) */}
-      <div className="mb-6 flex gap-1 rounded-2xl border border-white/85 bg-white/90 p-1.5 backdrop-blur-2xl select-none lg:hidden dark:border-indigo-400/10 dark:bg-slate-950/88">
+      <div className="mb-6 flex gap-1 rounded-2xl border border-white/15 bg-white/10 p-1.5 backdrop-blur-xl select-none lg:hidden dark:border-indigo-400/10 dark:bg-slate-950/40">
         <button
           type="button"
           className={`flex-1 py-2 text-center text-xs font-bold rounded-xl cursor-pointer transition-all duration-200 ${

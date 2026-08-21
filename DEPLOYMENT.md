@@ -71,6 +71,18 @@ The frontend bakes `VITE_*` values into the bundle at build time. In the Vercel 
 | `VITE_BACKEND_URL` | `https://job-finder-stream-backend.vercel.app` |
 | `VITE_API_BASE` | `https://job-finder-stream-backend.vercel.app/api` |
 
+Backend (`job-finder-stream-backend`) production values:
+
+| Variable | Required value |
+| --- | --- |
+| `BASE_URL` | `https://job-finder-stream-backend.vercel.app` |
+| `FRONTEND_URL` | `https://job-finder-stream.vercel.app` |
+| `CORS_ORIGINS` | `https://job-finder-stream.vercel.app,https://job-finder-stream-satyam-jaysawals-projects.vercel.app` |
+| `DATABASE_NAME` | `job_portal` |
+| `MONGODB_URI` | MongoDB Atlas connection string (sensitive) |
+| `JWT_SECRET` | long random secret used to sign auth tokens |
+| `RELOAD` | `false` |
+
 After changing any of these, redeploy the frontend. Do not commit actual environment values to Git.
 
 ## 4. Create a production deployment

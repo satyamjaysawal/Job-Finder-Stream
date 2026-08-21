@@ -6,13 +6,15 @@ import {
   setBootstrapped,
   setDatabaseName,
 } from "./store/slices/uiSlice";
+import { restoreSession } from "./store/slices/authSlice";
 import { fetchConfig } from "./store/slices/configSlice";
 import { fetchScrapeJsonList } from "./store/slices/scrapeJsonSlice";
 import { notifyError, notifySuccess } from "./store/notify";
-import { apiUrl } from "./store/api";
+import { apiUrl, authHeaders } from "./store/api";
 
 import Header from "./components/Header";
 import Toast from "./components/Toast";
+import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
 import JobsDashboardPage from "./pages/JobsDashboardPage";
 import WebsocketLivePage from "./pages/WebsocketLivePage";
@@ -21,6 +23,7 @@ export default function App() {
   const dispatch = useAppDispatch();
 
   const { theme, toast, bootstrapped, page } = useAppSelector((s) => s.ui);
+  const { user } = useAppSelector((s) => s.auth);
   const { loading: configLoading } = useAppSelector((s) => s.config);
 
   const toastTimer = useRef(null);
@@ -46,12 +49,17 @@ export default function App() {
   }, [toast?.id, toast, dispatch]);
 
   useEffect(() => {
+    dispatch(restoreSession());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!user) return;
     // quiet: true — no success spam on first paint; failures still toast
     dispatch(fetchConfig());
     dispatch(fetchScrapeJsonList({ quiet: true }));
 
     // Use apiUrl so production hits the Vercel backend, not same-origin /api (404).
-    fetch(apiUrl("health"))
+    fetch(apiUrl("health"), { headers: authHeaders() })
       .then(async (res) => {
         if (!res.ok) {
           notifyError(dispatch, `API health check failed (HTTP ${res.status}).`);
@@ -79,19 +87,32 @@ export default function App() {
           "API health check failed — is the backend running?"
         );
       });
-  }, [dispatch]);
+  }, [dispatch, user]);
 
   useEffect(() => {
     if (configLoading || bootstrapped) return;
     dispatch(setBootstrapped(true));
   }, [configLoading, bootstrapped, dispatch]);
 
+  if (!user) {
+    return (
+      <div className="app-shell app-shell--home relative isolate flex min-h-[100dvh] w-full flex-1 flex-col">
+        <Toast
+          key={toast?.id ?? "toast-empty"}
+          toast={toast}
+          onClose={() => dispatch(clearToast())}
+        />
+        <AuthPage />
+      </div>
+    );
+  }
+
   return (
     <div className={`app-shell app-shell--${page} relative isolate flex min-h-[100dvh] w-full flex-1 flex-col`}>
       {page !== "home" && (
         <div
           aria-hidden="true"
-          className="page-canvas pointer-events-none fixed inset-0 z-0 bg-[#eef2ff] bg-cover bg-center bg-no-repeat dark:bg-[#030712]"
+          className="page-canvas pointer-events-none fixed inset-0 z-0 bg-cover bg-center bg-no-repeat bg-[#0b1025]"
         />
       )}
 

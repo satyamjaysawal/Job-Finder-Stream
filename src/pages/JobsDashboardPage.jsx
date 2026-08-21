@@ -722,7 +722,7 @@ export default function JobsDashboardPage() {
       {jobCollections.length > 0 && (
         <div className="panel mb-6 p-4 flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
           {/* Tab Buttons */}
-          <div className="flex gap-1 self-start rounded-xl border border-white/80 bg-white/70 p-1 select-none backdrop-blur-md dark:border-slate-800/40 dark:bg-slate-900/60">
+          <div className="flex gap-1 self-start rounded-xl border border-white/15 bg-white/10 p-1 select-none backdrop-blur-md dark:border-slate-800/40 dark:bg-slate-900/40">
             <button
               type="button"
               className={`px-3.5 py-1.5 text-xs font-extrabold rounded-lg cursor-pointer transition-all duration-200 ${

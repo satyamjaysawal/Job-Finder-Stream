@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { toggleTheme, setPage } from "../store/slices/uiSlice";
+import { logout } from "../store/slices/authSlice";
 
 export default function Header() {
   const dispatch = useAppDispatch();
   const { theme, backendOnline, page } = useAppSelector((s) => s.ui);
+  const user = useAppSelector((s) => s.auth.user);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -14,7 +16,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-[200] w-full border-b border-slate-200/40 bg-white/70 backdrop-blur-xl dark:border-slate-800/50 dark:bg-slate-950/70">
+    <header className="sticky top-0 z-[200] w-full border-b border-white/10 bg-white/25 backdrop-blur-xl dark:border-slate-800/40 dark:bg-slate-950/35">
       <div className="safe-pad mx-auto flex w-full max-w-[1920px] items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8 xl:px-10">
         
         {/* Branding & Logo */}
@@ -27,7 +29,7 @@ export default function Header() {
           className="flex items-center gap-2 cursor-pointer group hover:opacity-90 transition-opacity focus:outline-none"
           aria-label="Go to Home"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-violet-600 shadow-md shadow-indigo-500/20 transition duration-300 group-hover:scale-105">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-violet-600 transition duration-300 group-hover:scale-105">
             <svg
               className="h-4.5 w-4.5 text-white"
               fill="none"
@@ -97,9 +99,26 @@ export default function Header() {
             )}
           </button>
 
+          {user && (
+            <span className="hidden lg:inline-flex max-w-[10rem] items-center gap-1.5 truncate rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-bold text-slate-700 dark:border-indigo-400/20 dark:bg-indigo-500/10 dark:text-indigo-200">
+              <span className="truncate">{user.name || user.email}</span>
+              <span className="rounded-full bg-indigo-500/20 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-indigo-300">
+                {user.role === "admin" ? "Admin" : "User"}
+              </span>
+            </span>
+          )}
+
+          <button
+            type="button"
+            className="hidden sm:inline-flex h-8.5 items-center rounded-xl border border-white/15 bg-white/10 px-2.5 text-[11px] font-bold text-slate-600 transition hover:bg-white/20 dark:border-slate-700 dark:bg-slate-950/40 dark:text-slate-300 dark:hover:bg-slate-900 cursor-pointer"
+            onClick={() => dispatch(logout())}
+          >
+            Log out
+          </button>
+
           {/* Connection status badge (Desktop/Tablet) */}
           <span
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-extrabold tracking-wide transition-colors duration-250 select-none border-slate-200 bg-slate-50/50 text-slate-650 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-400"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-extrabold tracking-wide transition-colors duration-250 select-none border-white/15 bg-white/10 text-slate-600 dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-400"
             title={`Backend is ${backendOnline ? "Online" : "Offline"}`}
           >
             <span
@@ -129,7 +148,7 @@ export default function Header() {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="absolute top-[57px] left-0 right-0 z-[150] border-b border-slate-200/60 bg-white px-4 py-3.5 shadow-lg dark:border-slate-800/80 dark:bg-slate-950 animate-[fade-up_0.2s_ease-out] md:hidden">
+        <div className="absolute top-[57px] left-0 right-0 z-[150] border-b border-white/10 bg-slate-950/95 px-4 py-3.5 backdrop-blur-xl dark:border-slate-800/80 animate-[fade-up_0.2s_ease-out] md:hidden">
           <div className="flex flex-col gap-1.5">
             {navItems.map((item) => {
               const active = page === item.id;
@@ -154,7 +173,24 @@ export default function Header() {
             })}
             
             {/* Connection status inside mobile dropdown */}
-            <div className="mt-2.5 flex items-center justify-between border-t border-slate-100 pt-2.5 dark:border-slate-900 select-none">
+            {user && (
+              <div className="mt-2.5 flex items-center justify-between border-t border-white/10 pt-2.5">
+                <span className="truncate text-[11px] font-bold text-slate-200">
+                  {user.name || user.email} · {user.role === "admin" ? "Admin" : "User"}
+                </span>
+                <button
+                  type="button"
+                  className="text-[11px] font-bold text-indigo-300 cursor-pointer"
+                  onClick={() => {
+                    dispatch(logout());
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  Log out
+                </button>
+              </div>
+            )}
+            <div className="mt-2.5 flex items-center justify-between border-t border-white/10 pt-2.5 select-none">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Connection Status</span>
               <span
                 className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-bold ${

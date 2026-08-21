@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { API_BASE, apiError, parseJson } from "../api";
+import { API_BASE, apiError, parseJson, authHeaders } from "../api";
 import { setBackendOnline } from "./uiSlice";
 import { notifyError, notifySuccess, notifyInfo } from "../notify";
 
@@ -18,7 +18,7 @@ export const fetchScrapeJsonList = createAsyncThunk(
   async (opts, { dispatch, rejectWithValue }) => {
     const quiet = opts?.quiet === true;
     try {
-      const res = await fetch(`${API_BASE}/scrape-jsons`);
+      const res = await fetch(`${API_BASE}/scrape-jsons`, { headers: authHeaders() });
       if (!res.ok) {
         const data = await parseJson(res);
         const msg = apiError(
@@ -63,7 +63,8 @@ export const openJsonCard = createAsyncThunk(
 
     try {
       const res = await fetch(
-        `${API_BASE}/scrape-jsons/${encodeURIComponent(id)}`
+        `${API_BASE}/scrape-jsons/${encodeURIComponent(id)}`,
+        { headers: authHeaders() }
       );
       if (!res.ok) {
         const err = await parseJson(res);
@@ -130,7 +131,7 @@ export const deleteScrapeJson = createAsyncThunk(
       notifyInfo(dispatch, `Deleting “${label}”…`);
       const res = await fetch(
         `${API_BASE}/scrape-jsons/${encodeURIComponent(id)}`,
-        { method: "DELETE" }
+        { method: "DELETE", headers: authHeaders() }
       );
       const data = await parseJson(res);
       if (!res.ok) {

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { API_BASE, EMPTY_CONFIG, apiError, parseJson } from "../api";
+import { API_BASE, EMPTY_CONFIG, apiError, parseJson, authHeaders } from "../api";
 import { setBackendOnline } from "./uiSlice";
 import { notifyError, notifySuccess } from "../notify";
 
@@ -7,7 +7,7 @@ export const fetchConfig = createAsyncThunk(
   "config/fetch",
   async (_, { dispatch, rejectWithValue }) => {
     try {
-      const res = await fetch(`${API_BASE}/config`);
+      const res = await fetch(`${API_BASE}/config`, { headers: authHeaders() });
       if (!res.ok) {
         const data = await parseJson(res);
         const msg = apiError(data, `Failed to load config (HTTP ${res.status})`);
@@ -34,7 +34,7 @@ export const saveConfigScalars = createAsyncThunk(
     try {
       const res = await fetch(`${API_BASE}/config`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: authHeaders({ "Content-Type": "application/json" }),
         body: JSON.stringify(payload),
       });
       const data = await parseJson(res);
@@ -66,7 +66,7 @@ async function listMutate({
   try {
     const res = await fetch(`${API_BASE}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify(body),
     });
     const data = await parseJson(res);

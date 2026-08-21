@@ -53,6 +53,48 @@ export function apiUrl(path = "") {
   return `${API_BASE}/${p}`;
 }
 
+const TOKEN_KEY = "job_portal_token";
+const USER_KEY = "job_portal_user";
+
+export function getToken() {
+  try {
+    return localStorage.getItem(TOKEN_KEY) || "";
+  } catch {
+    return "";
+  }
+}
+
+export function readStoredUser() {
+  try {
+    const raw = localStorage.getItem(USER_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setSession(token, user) {
+  try {
+    if (token) localStorage.setItem(TOKEN_KEY, token);
+    if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+  } catch (_) {}
+}
+
+export function clearSession() {
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+  } catch (_) {}
+}
+
+export function authHeaders(extra = {}) {
+  const token = getToken();
+  return {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...extra,
+  };
+}
+
 /**
  * WebSocket URL for live scrape feed.
  * - Relative API_BASE → same host as the page (Vite proxy ws: true)

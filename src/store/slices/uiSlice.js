@@ -5,12 +5,6 @@ function getInitialTheme() {
     const saved = localStorage.getItem("job_portal_theme");
     if (saved === "light" || saved === "dark") return saved;
   } catch (_) {}
-  if (
-    typeof window !== "undefined" &&
-    window.matchMedia?.("(prefers-color-scheme: light)").matches
-  ) {
-    return "light";
-  }
   return "dark";
 }
 

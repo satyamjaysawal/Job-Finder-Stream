@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   openJsonCard,
   deleteScrapeJson,
   toggleOpenCard,
 } from "../../store/slices/scrapeJsonSlice";
 import { formatWhen } from "../../utils/display";
-import { API_BASE } from "../../store/api";
+import { API_BASE, authHeaders } from "../../store/api";
 import { notifyError } from "../../store/notify";
 
 export default function SnapshotCard({ item, active, open, opening, deleting }) {
   const dispatch = useAppDispatch();
+  const isAdmin = useAppSelector((s) => s.auth.user?.role === "admin");
   const [fullData, setFullData] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -26,7 +27,9 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
   useEffect(() => {
     if (open && !fullData && !loadingDetails) {
       setLoadingDetails(true);
-      fetch(`${API_BASE}/scrape-jsons/${encodeURIComponent(item.id)}`)
+      fetch(`${API_BASE}/scrape-jsons/${encodeURIComponent(item.id)}`, {
+        headers: authHeaders(),
+      })
         .then(async (res) => {
           if (!res.ok) {
             notifyError(
@@ -405,7 +408,7 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
             )}
           </button>
         </div>
-        {confirmDelete ? (
+        {isAdmin && (confirmDelete ? (
           <div className="flex flex-wrap items-center gap-1.5 animate-[fade-up_0.15s_ease-out]">
             <span className="text-[10px] font-bold text-rose-600 dark:text-rose-400 mr-0.5">
               Delete forever?
@@ -439,7 +442,7 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
             </svg>
             {deleting ? "Deleting…" : "Delete"}
           </button>
-        )}
+        ))}
       </div>
     </article>
   );
