@@ -13,7 +13,11 @@ export default function Header() {
     { id: "home", label: "Home", icon: <path strokeLinecap="round" strokeLinejoin="round" d="m3 10.5 9-7.5 9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-9Z M9 21v-6h6v6" /> },
     { id: "dashboard", label: "Dashboard", icon: <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 4.5h6v6h-6v-6Zm9 0h6v6h-6v-6Zm-9 9h6v6h-6v-6Zm9 0h6v6h-6v-6Z" /> },
     { id: "websocket-live", label: "Live Stream", icon: <path strokeLinecap="round" strokeLinejoin="round" d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z" /> },
+    ...(user?.role === "admin"
+      ? [{ id: "users", label: "Users", icon: <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /> }]
+      : []),
   ];
+  const initial = (user?.name || user?.email || "U").slice(0, 1).toUpperCase();
 
   return (
     <header className="sticky top-0 z-[200] w-full border-b border-white/10 bg-white/25 backdrop-blur-xl dark:border-slate-800/40 dark:bg-slate-950/35">
@@ -100,10 +104,17 @@ export default function Header() {
           </button>
 
           {user && (
-            <span className="hidden lg:inline-flex max-w-[10rem] items-center gap-1.5 truncate rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-bold text-slate-700 dark:border-indigo-400/20 dark:bg-indigo-500/10 dark:text-indigo-200">
-              <span className="truncate">{user.name || user.email}</span>
-              <span className="rounded-full bg-indigo-500/20 px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-indigo-300">
-                {user.role === "admin" ? "Admin" : "User"}
+            <span className="hidden lg:flex max-w-[16rem] items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-2 py-1">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-indigo-500/25 text-xs font-bold text-indigo-100">
+                {initial}
+              </span>
+              <span className="min-w-0">
+                <span className="block truncate text-[11px] font-bold leading-tight text-white">
+                  {user.name || (user.anonymous ? "Anonymous user" : "User")}
+                </span>
+                <span className="block truncate text-[10px] leading-tight text-slate-400">
+                  {user.email}
+                </span>
               </span>
             </span>
           )}
@@ -175,8 +186,11 @@ export default function Header() {
             {/* Connection status inside mobile dropdown */}
             {user && (
               <div className="mt-2.5 flex items-center justify-between border-t border-white/10 pt-2.5">
-                <span className="truncate text-[11px] font-bold text-slate-200">
-                  {user.name || user.email} · {user.role === "admin" ? "Admin" : "User"}
+                <span className="min-w-0">
+                  <span className="block truncate text-[11px] font-bold text-slate-200">
+                    {user.name || (user.anonymous ? "Anonymous user" : "User")}
+                  </span>
+                  <span className="block truncate text-[10px] text-slate-400">{user.email}</span>
                 </span>
                 <button
                   type="button"

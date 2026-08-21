@@ -18,6 +18,7 @@ import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
 import JobsDashboardPage from "./pages/JobsDashboardPage";
 import WebsocketLivePage from "./pages/WebsocketLivePage";
+import UsersAdminPage from "./pages/UsersAdminPage";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -108,7 +109,7 @@ export default function App() {
   }
 
   return (
-    <div className={`app-shell app-shell--${page} relative isolate flex min-h-[100dvh] w-full flex-1 flex-col`}>
+    <div className={`app-shell app-shell--${page === "users" ? "dashboard" : page} relative isolate flex min-h-[100dvh] w-full flex-1 flex-col`}>
       {page !== "home" && (
         <div
           aria-hidden="true"
@@ -128,6 +129,7 @@ export default function App() {
         {page === "home" && <HomePage />}
         {page === "dashboard" && <JobsDashboardPage />}
         {page === "websocket-live" && <WebsocketLivePage />}
+        {page === "users" && user?.role === "admin" && <UsersAdminPage />}
       </main>
     </div>
   );

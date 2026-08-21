@@ -67,6 +67,47 @@ export const continueAsUser = createAsyncThunk("auth/anonymous", async (_, { rej
   }
 });
 
+export const fetchUsers = createAsyncThunk("auth/fetchUsers", async (_, { rejectWithValue }) => {
+  try {
+    const res = await fetch(apiUrl("auth/users"), { headers: { Authorization: `Bearer ${getToken()}` } });
+    const data = await parseJson(res);
+    if (!res.ok) return rejectWithValue(apiError(data, "Could not load users"));
+    return Array.isArray(data.users) ? data.users : [];
+  } catch {
+    return rejectWithValue("Could not load users");
+  }
+});
+
+export const deleteUser = createAsyncThunk("auth/deleteUser", async (userId, { dispatch, rejectWithValue }) => {
+  try {
+    const res = await fetch(apiUrl(`auth/users/${encodeURIComponent(userId)}`), {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+    const data = await parseJson(res);
+    if (!res.ok) return rejectWithValue(apiError(data, "Could not delete user"));
+    dispatch(fetchUsers());
+    return data;
+  } catch {
+    return rejectWithValue("Could not delete user");
+  }
+});
+
+export const deleteAllUsers = createAsyncThunk("auth/deleteAllUsers", async (_, { dispatch, rejectWithValue }) => {
+  try {
+    const res = await fetch(apiUrl("auth/users"), {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+    const data = await parseJson(res);
+    if (!res.ok) return rejectWithValue(apiError(data, "Could not delete users"));
+    dispatch(fetchUsers());
+    return data;
+  } catch {
+    return rejectWithValue("Could not delete users");
+  }
+});
+
 const storedUser = readStoredUser();
 const storedToken = getToken();
 
@@ -77,6 +118,8 @@ const authSlice = createSlice({
     user: storedUser,
     status: storedToken ? "authenticated" : "unauthenticated",
     error: null,
+    users: [],
+    usersStatus: "idle",
   },
   reducers: {
     logout(state) {
@@ -134,7 +177,23 @@ const authSlice = createSlice({
       .addCase(register.rejected, rejected)
       .addCase(continueAsUser.pending, pending)
       .addCase(continueAsUser.fulfilled, fulfilled)
-      .addCase(continueAsUser.rejected, rejected);
+      .addCase(continueAsUser.rejected, rejected)
+      .addCase(fetchUsers.pending, (state) => {
+        state.usersStatus = "loading";
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.usersStatus = "ready";
+        state.users = action.payload;
+      })
+      .addCase(fetchUsers.rejected, (state) => {
+        state.usersStatus = "ready";
+      })
+      .addCase(deleteUser.pending, (state) => {
+        state.usersStatus = "loading";
+      })
+      .addCase(deleteAllUsers.pending, (state) => {
+        state.usersStatus = "loading";
+      });
   },
 });
 
