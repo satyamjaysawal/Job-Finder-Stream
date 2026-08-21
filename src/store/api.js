@@ -102,25 +102,27 @@ export function authHeaders(extra = {}) {
  */
 export function getWsUrl(path = "/ws/jobs") {
   const cleanPath = `/${stripLeadingSlash(path)}`;
+  const token = getToken();
+  const tokenQuery = token ? `?token=${encodeURIComponent(token)}` : "";
 
   if (API_IS_ABSOLUTE) {
     try {
       const u = new URL(API_BASE);
       const wsProtocol = u.protocol === "https:" ? "wss:" : "ws:";
       const basePath = stripTrailingSlash(u.pathname || "/api");
-      return `${wsProtocol}//${u.host}${basePath}${cleanPath}`;
+      return `${wsProtocol}//${u.host}${basePath}${cleanPath}${tokenQuery}`;
     } catch {
       // fall through to same-origin
     }
   }
 
   if (typeof window === "undefined") {
-    return `ws://127.0.0.1:5000/api${cleanPath}`;
+    return `ws://127.0.0.1:5000/api${cleanPath}${tokenQuery}`;
   }
 
   const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   const apiPath = API_BASE.startsWith("/") ? API_BASE : "/api";
-  return `${wsProtocol}//${window.location.host}${apiPath}${cleanPath}`;
+  return `${wsProtocol}//${window.location.host}${apiPath}${cleanPath}${tokenQuery}`;
 }
 
 export function apiError(data, fallback = "Request failed") {

@@ -56,6 +56,7 @@ export default function JobsDashboardPage() {
     activeJobs,
     activeJsonMeta,
   } = useAppSelector((s) => s.scrapeJson);
+  const isAdmin = useAppSelector((s) => s.auth.user?.role === "admin");
 
   const [search, setSearch] = useState("");
   const [snapshotSearch, setSnapshotSearch] = useState("");
@@ -687,11 +688,14 @@ export default function JobsDashboardPage() {
           <p className="page-kicker flex items-center gap-1.5"><svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.4"><path strokeLinecap="round" strokeLinejoin="round" d="M4 19.5V6.75A2.25 2.25 0 0 1 6.25 4.5h11.5A2.25 2.25 0 0 1 20 6.75V19.5M2.5 19.5h19M8 8.25h.01M12 8.25h.01M16 8.25h.01M8 12h.01M12 12h.01M16 12h.01" /></svg> Data Warehouse</p>
           <h2 className="page-title">Database Collections</h2>
           <p className="page-subtitle mt-2">
-            Audit and browse every MongoDB snapshot — including each{" "}
-            <span className="font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded-md text-[11.5px] border border-slate-200/50 dark:border-slate-800 select-none">
+            {isAdmin
+              ? "Admin view — browse and delete every user's snapshots and live-stream runs."
+              : "Your snapshots only — browse and delete the searches and live streams you created."}{" "}
+            Each{" "}
+            <span className="font-bold text-slate-200 bg-white/10 px-1.5 py-0.5 rounded-md text-[11.5px] border border-white/10 select-none">
               Start Live Stream
             </span>{" "}
-             run (<span className="font-mono text-[11px] font-bold text-indigo-600 dark:text-indigo-400">live_stream_&lt;timestamp&gt;</span>).
+             run is saved as <span className="font-mono text-[11px] font-bold text-indigo-300">live_stream_&lt;timestamp&gt;</span>.
           </p>
         </div>
         <button
@@ -837,9 +841,9 @@ export default function JobsDashboardPage() {
             No Saved collections found
           </p>
           <p className="mt-1.5 max-w-sm text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-            Run <strong>Start Live Stream</strong> on the Live Stream page — each
-            run creates a new <span className="font-mono">live_stream_&lt;timestamp&gt;</span>{" "}
-            collection and appears here automatically.
+            {isAdmin
+              ? "No collections in the database yet. Live streams and searches from any user will appear here."
+              : "You have no collections yet. Start a Live Stream — that run is saved to your account and you can delete it anytime."}
           </p>
         </div>
       )}

@@ -11,7 +11,9 @@ import { notifyError } from "../../store/notify";
 
 export default function SnapshotCard({ item, active, open, opening, deleting }) {
   const dispatch = useAppDispatch();
-  const isAdmin = useAppSelector((s) => s.auth.user?.role === "admin");
+  const me = useAppSelector((s) => s.auth.user);
+  const isAdmin = me?.role === "admin";
+  const canDelete = isAdmin || item.owner_user_id === me?.user_id;
   const [fullData, setFullData] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -185,6 +187,11 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
           >
             {collectionName}
           </h3>
+          {isAdmin && item.owner_email && (
+            <p className="mt-1 truncate text-[10px] font-semibold text-slate-400" title={item.owner_email}>
+              {item.owner_name || "User"} · {item.owner_email}
+            </p>
+          )}
           <p className="mt-2 text-xs font-bold text-slate-450 dark:text-slate-500 flex items-center gap-1">
             <svg className="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -408,7 +415,7 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
             )}
           </button>
         </div>
-        {isAdmin && (confirmDelete ? (
+        {canDelete && (confirmDelete ? (
           <div className="flex flex-wrap items-center gap-1.5 animate-[fade-up_0.15s_ease-out]">
             <span className="text-[10px] font-bold text-rose-600 dark:text-rose-400 mr-0.5">
               Delete forever?
