@@ -87,7 +87,14 @@ export default function App() {
   }, [configLoading, bootstrapped, dispatch]);
 
   return (
-    <div className={`app-shell app-shell--${page} relative flex min-h-[100dvh] w-full flex-1 flex-col`}>
+    <div className={`app-shell app-shell--${page} relative isolate flex min-h-[100dvh] w-full flex-1 flex-col`}>
+      {page !== "home" && (
+        <div
+          aria-hidden="true"
+          className="page-canvas pointer-events-none fixed inset-0 z-0 bg-[#eef2ff] bg-cover bg-center bg-no-repeat dark:bg-[#030712]"
+        />
+      )}
+
       <Toast
         key={toast?.id ?? "toast-empty"}
         toast={toast}
@@ -96,7 +103,7 @@ export default function App() {
 
       <Header />
 
-      <main className="safe-pad mx-auto flex w-full max-w-[1920px] flex-1 flex-col px-4 py-5 sm:px-6 sm:py-6 lg:px-8 xl:px-10">
+      <main className="safe-pad relative z-10 mx-auto flex w-full max-w-[1920px] flex-1 flex-col px-4 py-5 sm:px-6 sm:py-6 lg:px-8 xl:px-10">
         {page === "home" && <HomePage />}
         {page === "dashboard" && <JobsDashboardPage />}
         {page === "websocket-live" && <WebsocketLivePage />}

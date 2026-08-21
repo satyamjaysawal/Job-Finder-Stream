@@ -129,7 +129,7 @@ export default function Header() {
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="absolute top-[57px] left-0 right-0 z-[150] border-b border-slate-200/35 bg-white/95 px-4 py-3.5 shadow-lg backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-950/95 animate-[fade-up_0.2s_ease-out] md:hidden">
+        <div className="absolute top-[57px] left-0 right-0 z-[150] border-b border-slate-200/60 bg-white px-4 py-3.5 shadow-lg dark:border-slate-800/80 dark:bg-slate-950 animate-[fade-up_0.2s_ease-out] md:hidden">
           <div className="flex flex-col gap-1.5">
             {navItems.map((item) => {
               const active = page === item.id;

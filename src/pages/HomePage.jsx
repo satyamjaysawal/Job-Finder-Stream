@@ -30,7 +30,7 @@ export default function HomePage() {
   const dispatch = useAppDispatch();
 
   return (
-    <main className="home-hero page-shell justify-center">
+    <div className="home-hero page-shell justify-center">
       <div className="relative z-10 mx-auto w-full max-w-[1320px] px-5 py-14 sm:px-8 sm:py-20 lg:px-12 lg:py-24">
         <section className="max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-indigo-300/25 bg-indigo-400/10 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[.18em] text-indigo-100 backdrop-blur-md">
@@ -103,6 +103,6 @@ export default function HomePage() {
           ))}
         </div>
       </div>
-    </main>
+    </div>
   );
 }

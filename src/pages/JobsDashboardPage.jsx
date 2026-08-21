@@ -722,7 +722,7 @@ export default function JobsDashboardPage() {
       {jobCollections.length > 0 && (
         <div className="panel mb-6 p-4 flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
           {/* Tab Buttons */}
-          <div className="flex gap-1 bg-slate-100/80 dark:bg-slate-900/60 p-1 rounded-xl self-start select-none border border-slate-200/25 dark:border-slate-800/40">
+          <div className="flex gap-1 self-start rounded-xl border border-white/80 bg-white/70 p-1 select-none backdrop-blur-md dark:border-slate-800/40 dark:bg-slate-900/60">
             <button
               type="button"
               className={`px-3.5 py-1.5 text-xs font-extrabold rounded-lg cursor-pointer transition-all duration-200 ${
@@ -803,7 +803,7 @@ export default function JobsDashboardPage() {
 
       {/* Filtered out empty state */}
       {jobCollections.length > 0 && filteredCollections.length === 0 && (
-        <div className="empty-state mt-4 p-8 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/30">
+        <div className="empty-state mt-4 border-dashed">
           <div className="mb-3.5 flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-450 dark:bg-slate-900 dark:text-slate-500 border border-slate-200/50 dark:border-slate-800">
             <svg className="h-5 w-5 animate-pulse text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
               <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.637 10.637Z" />

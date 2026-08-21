@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -25,7 +26,7 @@
     background:
       radial-gradient(1000px 600px at 0% 0%, rgba(99, 102, 241, 0.06), transparent 50%),
       radial-gradient(800px 600px at 100% 20%, rgba(139, 92, 246, 0.06), transparent 50%),
-      #fafafd;
+      #f4f7ff;
     transition: background-color 0.3s ease;
   }
 
@@ -70,18 +71,8 @@
     isolation: isolate;
   }
 
-  .app-shell:not(.app-shell--home)::before {
-    content: "";
-    position: fixed;
-    z-index: 0;
-    inset: 4.5rem 0 0;
-    pointer-events: none;
-    background:
-      radial-gradient(42rem 30rem at 8% 12%, rgba(79, 70, 229, .08), transparent 70%),
-      radial-gradient(34rem 26rem at 94% 34%, rgba(168, 85, 247, .07), transparent 72%),
-      linear-gradient(rgba(99, 102, 241, .025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(99, 102, 241, .025) 1px, transparent 1px);
-    background-size: auto, auto, 32px 32px, 32px 32px;
+  .app-shell--home {
+    background-color: #0b1025;
   }
 
   .app-shell--home main {
@@ -89,45 +80,58 @@
     padding: 0;
   }
 
-  /* Keep the imagery inside the app stacking context, behind all page content. */
-  .app-shell > main {
-    position: relative;
-    z-index: 1;
+  /* Photography lives on the page canvas, behind glass Tailwind panels. */
+  .page-canvas {
+    background-color: #eef2ff;
   }
 
-  .app-shell--dashboard::before,
-  .app-shell--websocket-live::before {
+  .page-canvas::after {
+    content: "";
+    position: absolute;
     inset: 0;
-    opacity: .82;
-    background-position: center top;
-    background-size: cover;
-    background-repeat: no-repeat;
+    pointer-events: none;
+    opacity: 0.45;
+    background-image:
+      radial-gradient(42rem 30rem at 8% 12%, rgba(79, 70, 229, 0.14), transparent 70%),
+      radial-gradient(34rem 26rem at 94% 34%, rgba(168, 85, 247, 0.12), transparent 72%),
+      linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+    background-size: auto, auto, 32px 32px, 32px 32px;
+    mask-image: linear-gradient(to bottom, black, transparent 88%);
   }
 
-  .app-shell--dashboard::before {
+  .app-shell--dashboard .page-canvas {
     background-image:
-      linear-gradient(90deg, rgba(248,250,252,.64) 0%, rgba(248,250,252,.48) 46%, rgba(238,242,255,.20) 100%),
-      url("https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=2200&q=82");
+      linear-gradient(125deg, rgba(238, 242, 255, 0.58) 0%, rgba(238, 242, 255, 0.28) 48%, rgba(237, 233, 254, 0.12) 100%),
+      url("https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2200&q=85");
   }
 
-  .dark .app-shell--dashboard::before {
-    opacity: .32;
+  .app-shell--websocket-live .page-canvas {
     background-image:
-      linear-gradient(90deg, rgba(3,7,18,.96) 0%, rgba(3,7,18,.91) 50%, rgba(15,23,42,.72) 100%),
-      url("https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=2200&q=82");
+      linear-gradient(125deg, rgba(238, 242, 255, 0.58) 0%, rgba(238, 242, 255, 0.28) 48%, rgba(237, 233, 254, 0.12) 100%),
+      url("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=2200&q=85");
+    background-position: 58% center;
   }
 
-  .app-shell--websocket-live::before {
-    background-image:
-      linear-gradient(90deg, rgba(248,250,252,.64) 0%, rgba(248,250,252,.48) 46%, rgba(238,242,255,.20) 100%),
-      url("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=2200&q=82");
+  .dark .page-canvas {
+    background-color: #030712;
   }
 
-  .dark .app-shell--websocket-live::before {
-    opacity: .30;
+  .dark .page-canvas::after {
+    opacity: 0.28;
+  }
+
+  .dark .app-shell--dashboard .page-canvas {
     background-image:
-      linear-gradient(90deg, rgba(3,7,18,.96) 0%, rgba(3,7,18,.90) 48%, rgba(15,23,42,.72) 100%),
-      url("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=2200&q=82");
+      linear-gradient(125deg, rgba(3, 7, 18, 0.78) 0%, rgba(3, 7, 18, 0.58) 48%, rgba(15, 23, 42, 0.40) 100%),
+      url("https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2200&q=85");
+  }
+
+  .dark .app-shell--websocket-live .page-canvas {
+    background-image:
+      linear-gradient(125deg, rgba(3, 7, 18, 0.78) 0%, rgba(3, 7, 18, 0.58) 48%, rgba(15, 23, 42, 0.40) 100%),
+      url("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=2200&q=85");
+    background-position: 58% center;
   }
 
   .page-shell {
@@ -143,7 +147,7 @@
     overflow: hidden;
     background-color: #0b1025;
     background-image:
-      linear-gradient(90deg, rgba(5, 9, 27, .97) 0%, rgba(8, 13, 35, .91) 39%, rgba(12, 18, 47, .48) 67%, rgba(12, 18, 47, .28) 100%),
+      linear-gradient(90deg, rgba(8, 12, 35, .97) 0%, rgba(15, 23, 64, .91) 42%, rgba(47, 30, 98, .52) 68%, rgba(27, 20, 64, .34) 100%),
       url("https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=2200&q=85");
     background-position: center;
     background-size: cover;
@@ -169,7 +173,7 @@
   }
 
   .workspace-hero {
-    @apply relative overflow-hidden rounded-3xl border border-white/60 bg-white/35 px-5 py-5 shadow-xl shadow-slate-900/[0.05] backdrop-blur-lg dark:border-slate-700/40 dark:bg-slate-950/55 dark:shadow-black/20 sm:px-7 sm:py-6;
+    @apply relative overflow-hidden rounded-3xl border border-white/85 bg-white/90 px-5 py-5 shadow-xl shadow-indigo-950/[0.07] backdrop-blur-2xl dark:border-indigo-400/10 dark:bg-slate-950/88 dark:shadow-black/20 sm:px-7 sm:py-6;
   }
 
   .workspace-hero::after {
@@ -188,12 +192,22 @@
 
   .dashboard-page .panel,
   .live-page .panel {
-    @apply border-white/55 bg-white/42 shadow-md shadow-slate-900/[0.035] dark:border-slate-700/40 dark:bg-slate-950/60;
+    @apply border-white/85 bg-white/90 shadow-md shadow-indigo-950/[0.045] backdrop-blur-2xl dark:border-indigo-400/10 dark:bg-slate-950/88;
   }
 
   .dashboard-page .input-field,
   .live-page .input-field {
-    @apply bg-white/45 dark:bg-slate-950/55;
+    @apply border-white/85 bg-white/92 shadow-sm shadow-indigo-950/[0.025] dark:border-slate-700/60 dark:bg-slate-950/80;
+  }
+
+  .dashboard-page .page-kicker,
+  .live-page .page-kicker {
+    @apply text-indigo-700 dark:text-indigo-300;
+  }
+
+  .dashboard-page .page-title,
+  .live-page .page-title {
+    @apply bg-gradient-to-r from-slate-950 via-indigo-900 to-violet-800 dark:from-white dark:via-indigo-100 dark:to-violet-200;
   }
 
   .page-kicker {
@@ -209,9 +223,9 @@
   }
 
   .panel {
-    @apply rounded-2xl border border-slate-200/40 bg-white/60 shadow-sm
-      shadow-slate-900/[0.01] backdrop-blur-xl transition-all duration-300 ease-out
-      dark:border-slate-800/50 dark:bg-slate-950/45 dark:shadow-black/10;
+    @apply rounded-2xl border border-slate-200/60 bg-white/90 shadow-sm
+      shadow-indigo-950/[0.025] backdrop-blur-2xl transition-all duration-300 ease-out
+      dark:border-slate-800/50 dark:bg-slate-950/85 dark:shadow-black/10;
   }
 
   .panel-hover {
@@ -220,8 +234,8 @@
   }
 
   .panel-muted {
-    @apply rounded-xl border border-slate-200/35 bg-slate-50/40
-      dark:border-slate-800/40 dark:bg-slate-900/20 backdrop-blur-md;
+    @apply rounded-xl border border-slate-200/45 bg-white/70
+      dark:border-slate-800/40 dark:bg-slate-900/45 backdrop-blur-md;
   }
 
   .btn-primary {
@@ -232,6 +246,15 @@
       active:scale-[0.96]
       disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 disabled:hover:translate-y-0
       dark:from-indigo-500 dark:to-violet-500 dark:hover:from-indigo-400 dark:hover:to-violet-400;
+  }
+
+  .btn-primary:focus-visible,
+  .btn-ghost:focus-visible,
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+    @apply outline-none ring-4 ring-indigo-500/25 ring-offset-2 ring-offset-transparent;
   }
 
   .btn-ghost {
@@ -299,8 +322,8 @@
 
   .empty-state {
     @apply flex min-h-[300px] flex-col items-center justify-center rounded-2xl border
-      border-slate-200/40 bg-white/50 px-6 py-12 text-center shadow-sm backdrop-blur-md
-      dark:border-slate-800/50 dark:bg-slate-950/45;
+      border-slate-200/55 bg-white/92 px-6 py-12 text-center shadow-sm backdrop-blur-2xl
+      dark:border-slate-800/50 dark:bg-slate-950/88;
   }
 
   .jobs-grid {

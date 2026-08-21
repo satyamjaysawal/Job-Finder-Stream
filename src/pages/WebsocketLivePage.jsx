@@ -320,7 +320,7 @@ export default function WebsocketLivePage() {
       )}
 
       {/* Mobile Tab switcher (only visible below lg breakpoint) */}
-      <div className="flex lg:hidden bg-slate-150/70 dark:bg-slate-900/50 p-1.5 rounded-2xl mb-6 select-none border border-slate-200/40 dark:border-slate-800/40 gap-1">
+      <div className="mb-6 flex gap-1 rounded-2xl border border-white/85 bg-white/90 p-1.5 backdrop-blur-2xl select-none lg:hidden dark:border-indigo-400/10 dark:bg-slate-950/88">
         <button
           type="button"
           className={`flex-1 py-2 text-center text-xs font-bold rounded-xl cursor-pointer transition-all duration-200 ${

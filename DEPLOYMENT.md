@@ -122,10 +122,10 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://job-finder-stream-backend.verce
 
 Also verify in a browser:
 
-1. Homepage opens first.
-2. Dashboard loads collections and filters.
-3. Live Stream opens configuration and shows connection status.
-4. Theme switching works in light and dark mode.
+1. Homepage opens first; the hero photograph and glass CTAs match the rest of the product.
+2. Dashboard loads collections and filters; the office canvas image is visible in the page gutters behind the glass panels in light mode.
+3. Live Stream opens configuration and shows connection status; the workspace canvas image is visible behind the controls.
+4. Theme switching works in light and dark mode; fonts, colors, and panel treatment stay consistent across Home, Dashboard, and Live Stream.
 5. The frontend is serving the app bundle, not a Vercel Deployment Protection page.
 
 ## Notes
@@ -133,3 +133,18 @@ Also verify in a browser:
 - `vercel.json` contains the SPA rewrite needed for direct-route refreshes.
 - WebSockets can be limited on Vercel serverless deployments; use the local backend for full live-stream testing when required.
 - Do not delete the Vercel project to redeploy. Project deletion also removes environment variables, aliases, and deployment history.
+
+## UI quality check before a release
+
+The frontend uses Tailwind CSS 4 with a shared indigo/violet glass design system and Plus Jakarta Sans. Photography sits on a full-bleed **page canvas** (`.page-canvas`) behind translucent Tailwind panels — not as a faint overlay on the panels themselves. That keeps the image visible in light mode without lowering text contrast.
+
+Before release, check every route in both light and dark mode, on desktop and a narrow/mobile width:
+
+1. **Home:** hero image is visible behind the dark marketing overlay; primary and secondary actions are readable and usable. This page is the visual reference for the rest of the app.
+2. **Dashboard:** the office/workspace canvas image is clearly present in the page gutters around glass collection cards. Filters, titles, and job-card text stay high-contrast on `bg-white/90` (light) / `bg-slate-950/88` (dark) panels.
+3. **Live Stream:** the workspace canvas image is visible behind the controls, logs, and job feed; connection status colors remain distinct (emerald / amber / rose).
+4. **Matching system:** same indigo–violet palette, same glass panels, same heading scale (`.page-kicker`, `.page-title`, `.page-subtitle`), and the same header/nav treatment on every page.
+5. **Responsive layout:** navigation, filters, buttons, and cards must not overlap or clip.
+6. **Typography and focus:** Plus Jakarta Sans is loaded when available, headings and body copy have clear hierarchy, and keyboard focus rings are visible.
+
+Capture screenshots of Home, Dashboard, and Live Stream in light and dark mode after significant visual changes. Confirm the canvas image is actually visible on Dashboard and Live Stream in light mode, then run `npm run build` before the release steps above.
