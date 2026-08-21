@@ -333,8 +333,8 @@ export default function JobsDashboardPage() {
     const activeCity = activeJsonMeta?.filters?.city ?? (Array.isArray(activeJsonMeta?.config_snapshot?.cities) ? activeJsonMeta.config_snapshot.cities.join(", ") : "");
 
     return (
-      <section className="page-shell">
-        <div className="page-header animate-[fade-in_0.25s_ease-out]">
+      <section className="page-shell dashboard-page">
+        <div className="page-header workspace-hero animate-[fade-in_0.25s_ease-out]">
           <div className="min-w-0 w-full">
             <button
               type="button"
@@ -681,10 +681,10 @@ export default function JobsDashboardPage() {
   }
 
   return (
-    <section className="page-shell">
-      <div className="page-header">
+    <section className="page-shell dashboard-page">
+      <div className="page-header workspace-hero">
         <div>
-          <p className="page-kicker">Data Warehouse</p>
+          <p className="page-kicker flex items-center gap-1.5"><svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.4"><path strokeLinecap="round" strokeLinejoin="round" d="M4 19.5V6.75A2.25 2.25 0 0 1 6.25 4.5h11.5A2.25 2.25 0 0 1 20 6.75V19.5M2.5 19.5h19M8 8.25h.01M12 8.25h.01M16 8.25h.01M8 12h.01M12 12h.01M16 12h.01" /></svg> Data Warehouse</p>
           <h2 className="page-title">Database Collections</h2>
           <p className="page-subtitle mt-2">
             Audit and browse every MongoDB snapshot — including each{" "}

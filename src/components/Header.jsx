@@ -8,9 +8,9 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { id: "home", label: "Home" },
-    { id: "dashboard", label: "Dashboard" },
-    { id: "websocket-live", label: "Live Stream" },
+    { id: "home", label: "Home", icon: <path strokeLinecap="round" strokeLinejoin="round" d="m3 10.5 9-7.5 9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-9Z M9 21v-6h6v6" /> },
+    { id: "dashboard", label: "Dashboard", icon: <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 4.5h6v6h-6v-6Zm9 0h6v6h-6v-6Zm-9 9h6v6h-6v-6Zm9 0h6v6h-6v-6Z" /> },
+    { id: "websocket-live", label: "Live Stream", icon: <path strokeLinecap="round" strokeLinejoin="round" d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z" /> },
   ];
 
   return (
@@ -60,7 +60,7 @@ export default function Header() {
                 <button
                   key={item.id}
                   type="button"
-                  className={`shrink-0 rounded-lg px-3.5 py-1.5 text-xs font-bold tracking-wide transition-all duration-200 cursor-pointer ${
+                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-bold tracking-wide transition-all duration-200 cursor-pointer ${
                     active
                       ? "bg-white text-indigo-650 shadow-sm dark:bg-slate-800 dark:text-white"
                       : "text-slate-500 hover:text-slate-850 dark:text-slate-400 dark:hover:text-slate-200"
@@ -68,6 +68,7 @@ export default function Header() {
                   onClick={() => dispatch(setPage(item.id))}
                   aria-current={active ? "page" : undefined}
                 >
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">{item.icon}</svg>
                   {item.label}
                 </button>
               );
@@ -136,7 +137,7 @@ export default function Header() {
                 <button
                   key={item.id}
                   type="button"
-                  className={`w-full rounded-xl px-4 py-2.5 text-left text-xs font-bold transition-all duration-200 cursor-pointer ${
+                  className={`flex w-full items-center gap-2 rounded-xl px-4 py-2.5 text-left text-xs font-bold transition-all duration-200 cursor-pointer ${
                     active
                       ? "bg-indigo-50/80 text-indigo-650 dark:bg-indigo-950/45 dark:text-indigo-405"
                       : "text-slate-600 hover:bg-slate-50/50 dark:text-slate-300 dark:hover:bg-slate-900/50"
@@ -146,6 +147,7 @@ export default function Header() {
                     setMobileMenuOpen(false);
                   }}
                 >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">{item.icon}</svg>
                   {item.label}
                 </button>
               );

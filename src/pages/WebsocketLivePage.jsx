@@ -237,10 +237,10 @@ export default function WebsocketLivePage() {
         : "Disconnected";
 
   return (
-    <section className="page-shell">
-      <div className="page-header">
+    <section className="page-shell live-page">
+      <div className="page-header workspace-hero">
         <div>
-          <p className="page-kicker">Live Analytics</p>
+          <p className="page-kicker flex items-center gap-1.5"><span className="status-dot status-online !h-1.5 !w-1.5" /> Live Analytics</p>
           <h2 className="page-title">Live Scraper Console</h2>
           <p className="page-subtitle mt-2">
             Configure scraper inputs and watch job documents flow in real time over WebSockets.

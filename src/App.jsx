@@ -87,7 +87,7 @@ export default function App() {
   }, [configLoading, bootstrapped, dispatch]);
 
   return (
-    <div className="app-shell relative flex min-h-[100dvh] w-full flex-1 flex-col">
+    <div className={`app-shell app-shell--${page} relative flex min-h-[100dvh] w-full flex-1 flex-col`}>
       <Toast
         key={toast?.id ?? "toast-empty"}
         toast={toast}

@@ -19,7 +19,7 @@ const initialState = {
   toast: null,
   backendOnline: false,
   bootstrapped: false,
-  page: "dashboard",
+  page: "home",
   databaseName: "MongoDB",
 };
 
