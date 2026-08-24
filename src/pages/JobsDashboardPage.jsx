@@ -545,7 +545,7 @@ export default function JobsDashboardPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 0 0-8 0c0 1.657-1.343 3-3 3v2h14v-2c-1.657 0-3-1.343-3-3Z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 16h6" />
                   </svg>
-                  Companies
+                  Companies · {showTopCompanies ? "Hide" : "Show"}
                 </button>
                 {hasActiveFilters && (
                   <button
@@ -569,7 +569,7 @@ export default function JobsDashboardPage() {
             </div>
 
             {showTopCompanies && (
-              <div className="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 via-white to-violet-50 p-4 shadow-sm dark:border-indigo-900/70 dark:from-indigo-950/30 dark:via-slate-950 dark:to-violet-950/20">
+              <div className="dashboard-companies-panel rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 via-white to-violet-50 p-4 shadow-sm dark:border-indigo-900/70 dark:from-indigo-950/30 dark:via-slate-950 dark:to-violet-950/20">
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <h3 className="text-sm font-black text-indigo-900 dark:text-indigo-200">Companies</h3>

@@ -149,7 +149,7 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
 
   return (
     <article
-      className={`panel flex flex-col p-5 transition-all duration-300 relative overflow-hidden group glow-container ${
+      className={`snapshot-card panel flex flex-col p-3 transition-all duration-300 relative overflow-hidden group glow-container ${
         active
           ? "border-indigo-550 ring-4 ring-indigo-500/10 shadow-lg shadow-indigo-500/[0.03] dark:border-indigo-400 dark:ring-indigo-400/10 scale-[1.01]"
           : "hover:border-indigo-500/20 hover:shadow-md hover:-translate-y-0.5"

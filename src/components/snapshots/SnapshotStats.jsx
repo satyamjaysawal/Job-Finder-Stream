@@ -55,11 +55,11 @@ export default function SnapshotStats({ totalCollections, totalJobsTracked }) {
   ];
 
   return (
-    <div className="mb-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="snapshot-stats mb-4 grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {items.map((item) => (
         <div
           key={item.label}
-          className={`panel relative overflow-hidden p-5 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 group ${item.borderColor}`}
+          className={`snapshot-stat-card panel relative overflow-hidden p-3 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 group ${item.borderColor}`}
         >
           {/* Subtle background glow */}
           <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-40 transition-opacity duration-300 group-hover:opacity-70 pointer-events-none`} />

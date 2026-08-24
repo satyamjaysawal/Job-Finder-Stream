@@ -240,16 +240,90 @@
     padding: .75rem;
   }
 
+  .dashboard-compact .dashboard-companies-panel {
+    padding: .625rem;
+    border-radius: .75rem;
+  }
+
+  .dashboard-compact .dashboard-companies-panel h3 {
+    font-size: .75rem;
+  }
+
+  .dashboard-compact .dashboard-companies-panel h4,
+  .dashboard-compact .dashboard-companies-panel p,
+  .dashboard-compact .dashboard-companies-panel button,
+  .dashboard-compact .dashboard-companies-panel input {
+    font-size: .625rem;
+  }
+
+  .dashboard-compact .dashboard-companies-panel .grid {
+    gap: .375rem;
+  }
+
+  .dashboard-compact .dashboard-companies-panel section {
+    padding: .5rem;
+    border-radius: .5rem;
+  }
+
+  .dashboard-compact .dashboard-companies-panel section > div {
+    gap: .25rem;
+  }
+
+  .dashboard-compact .dashboard-companies-panel section button {
+    padding: .25rem .4rem;
+    line-height: 1.1;
+  }
+
+  .dashboard-compact .dashboard-companies-panel > div:last-child {
+    margin-top: .5rem;
+    padding-top: .5rem;
+  }
+
+  .dashboard-compact .dashboard-companies-panel .input-field {
+    min-height: 1.875rem;
+  }
+
+  .dashboard-compact .dashboard-companies-panel + .grid {
+    gap: .5rem;
+  }
+
+  .dashboard-compact select.input-field {
+    min-height: 1.875rem;
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+    font-size: .625rem;
+  }
+
   .dashboard-compact .input-field {
-    min-height: 2rem;
-    padding-top: .35rem;
-    padding-bottom: .35rem;
-    font-size: .6875rem;
+    min-height: 1.875rem;
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+    font-size: .625rem;
   }
 
   .dashboard-compact button {
     border-radius: .5rem;
-    font-size: .6875rem;
+    min-height: 1.875rem;
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+    font-size: .625rem;
+  }
+
+  .dashboard-compact input[type="search"],
+  .dashboard-compact input[type="text"] {
+    min-height: 1.875rem;
+    height: 1.875rem;
+  }
+
+  .dashboard-compact .panel > .flex input[type="search"] {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .dashboard-compact .panel > .flex > .relative button {
+    min-height: 1.75rem;
+    padding-left: .5rem;
+    padding-right: .5rem;
   }
 
   .dashboard-compact .grid {
@@ -274,6 +348,73 @@
   .dashboard-compact .scraper-config-grid h4 {
     font-size: .5625rem;
     letter-spacing: .08em;
+  }
+
+  .dashboard-compact .snapshot-stats {
+    gap: .5rem;
+  }
+
+  .dashboard-compact .snapshot-stat-card {
+    min-height: 5.5rem;
+    padding: .625rem;
+    border-radius: .75rem;
+  }
+
+  .dashboard-compact .snapshot-stat-card p:first-child {
+    font-size: .5625rem;
+    letter-spacing: .1em;
+  }
+
+  .dashboard-compact .snapshot-stat-card p:nth-child(2) {
+    margin-top: .375rem;
+    font-size: 1.25rem;
+  }
+
+  .dashboard-compact .snapshot-stat-card p:last-child {
+    margin-top: .5rem;
+    font-size: .625rem;
+  }
+
+  .dashboard-compact .snapshot-stat-card > div.relative > div:last-child {
+    width: 2rem;
+    height: 2rem;
+    border-radius: .625rem;
+  }
+
+  .dashboard-compact .snapshot-stat-card svg {
+    width: .9rem;
+    height: .9rem;
+  }
+
+  .dashboard-compact .snapshot-card {
+    padding: .625rem;
+    border-radius: .75rem;
+  }
+
+  .dashboard-compact .snapshot-card h3 {
+    margin-top: .375rem;
+    font-size: .75rem;
+    line-height: 1.25;
+  }
+
+  .dashboard-compact .snapshot-card > .flex:first-of-type {
+    gap: .5rem;
+  }
+
+  .dashboard-compact .snapshot-card > .flex:first-of-type p {
+    font-size: .5625rem;
+  }
+
+  .dashboard-compact .snapshot-card > div:nth-of-type(3) {
+    margin-top: .625rem;
+    padding: .5rem;
+    border-radius: .625rem;
+    gap: .25rem;
+  }
+
+  .dashboard-compact .snapshot-card > div:nth-of-type(3) span {
+    padding: .15rem .35rem;
+    font-size: .5625rem;
   }
 
   /* Keep the large-selection confirmation centered in the desktop viewport,

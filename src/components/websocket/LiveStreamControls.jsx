@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   fetchConfig,
@@ -1612,7 +1613,7 @@ export default function LiveStreamControls({ activeSession, onStartStream, onSto
       </form>
 
       {largeSelectionConfirm && (
-        <div className="large-selection-toast fixed right-4 top-4 z-[4000] w-[min( calc(100vw-2rem), 25rem)] rounded-xl border border-amber-300 bg-white p-3 shadow-2xl dark:border-amber-800 dark:bg-slate-950 animate-[fade-in_0.2s_ease-out]" role="alert">
+        createPortal(<div className="large-selection-toast fixed right-4 top-4 z-[4000] w-[min( calc(100vw-2rem), 25rem)] rounded-xl border border-amber-300 bg-white p-3 shadow-2xl dark:border-amber-800 dark:bg-slate-950 animate-[fade-in_0.2s_ease-out]" role="alert">
           <div className="flex items-start gap-2.5">
             <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300">!</span>
             <div className="min-w-0 flex-1">
@@ -1631,7 +1632,7 @@ export default function LiveStreamControls({ activeSession, onStartStream, onSto
               </div>
             </div>
           </div>
-        </div>
+        </div>, document.body)
       )}
     </div>
   );
