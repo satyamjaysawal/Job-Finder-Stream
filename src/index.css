@@ -225,8 +225,23 @@
   }
 
   .dashboard-compact .page-title {
-    font-size: 1.35rem;
+    font-size: 1.05rem;
     line-height: 1.15;
+  }
+
+  .dashboard-compact .page-kicker {
+    font-size: .5rem;
+    letter-spacing: .16em;
+  }
+
+  .dashboard-compact .page-header h2 {
+    font-size: 1.05rem;
+  }
+
+  .dashboard-compact .page-header .text-\[10px\],
+  .dashboard-compact .page-header .text-\[11px\],
+  .dashboard-compact .page-header .text-\[11\.5px\] {
+    font-size: .5rem;
   }
 
   .dashboard-compact .page-subtitle {
@@ -257,6 +272,11 @@
   }
 
   .dashboard-compact .dashboard-companies-panel .grid {
+    gap: .375rem;
+  }
+
+  .dashboard-compact .dashboard-companies-panel > .grid {
+    grid-template-columns: minmax(0, 1fr) !important;
     gap: .375rem;
   }
 
@@ -292,6 +312,35 @@
     padding-top: .25rem;
     padding-bottom: .25rem;
     font-size: .625rem;
+  }
+
+  .dashboard-compact .page-header {
+    margin-bottom: .625rem;
+  }
+
+  .dashboard-compact .page-header .mb-4 {
+    margin-bottom: .5rem;
+  }
+
+  .dashboard-compact .page-header .mt-3 {
+    margin-top: .5rem;
+  }
+
+  .dashboard-compact .page-header .mt-4 {
+    margin-top: .625rem;
+  }
+
+  .dashboard-compact .page-header [class*="rounded-xl"] {
+    padding: .5rem;
+  }
+
+  .dashboard-compact .page-header .flex-wrap {
+    gap: .25rem;
+  }
+
+  .dashboard-compact .dashboard-companies-panel {
+    max-height: 14rem;
+    overflow-y: auto;
   }
 
   .dashboard-compact .input-field {
@@ -393,8 +442,31 @@
 
   .dashboard-compact .snapshot-card h3 {
     margin-top: .375rem;
-    font-size: .75rem;
+    font-size: .6875rem;
     line-height: 1.25;
+  }
+
+  .dashboard-compact .snapshot-card {
+    min-height: 0;
+    gap: .25rem;
+  }
+
+  .dashboard-compact .snapshot-card .text-base {
+    font-size: .6875rem;
+  }
+
+  .dashboard-compact .snapshot-card .text-xs,
+  .dashboard-compact .snapshot-card .text-sm {
+    font-size: .5625rem;
+  }
+
+  .dashboard-compact .snapshot-card .text-\[10px\],
+  .dashboard-compact .snapshot-card .text-\[11px\] {
+    font-size: .5rem;
+  }
+
+  .dashboard-compact .snapshot-card .p-3 {
+    padding: .375rem;
   }
 
   .dashboard-compact .snapshot-card > .flex:first-of-type {

@@ -993,7 +993,7 @@ export default function JobsDashboardPage() {
       )}
 
       {/* Snapshot Cards Grid */}
-      <div className="grid w-full flex-1 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="grid w-full flex-1 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {filteredCollections.map((item) => (
           <SnapshotCard
             key={item.id}
