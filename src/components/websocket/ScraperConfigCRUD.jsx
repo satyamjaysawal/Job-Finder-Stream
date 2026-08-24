@@ -417,7 +417,7 @@ export default function ScraperConfigCRUD({ onClose }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 text-sm lg:grid-cols-2 xl:grid-cols-3">
+      <div className="scraper-config-grid grid grid-cols-1 gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {/* Performance + primary country + experience — saved together */}
         <form
           onSubmit={handleSaveScalars}

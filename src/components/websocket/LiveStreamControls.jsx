@@ -1566,9 +1566,10 @@ export default function LiveStreamControls({ activeSession, onStartStream, onSto
           </div>
         </div>
 
+        <div className="live-stream-actions flex items-center gap-2">
         <button
           type="submit"
-          className="btn-primary flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl py-2.5 text-center font-bold"
+          className="btn-primary live-stream-action flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg px-2 py-1.5 text-center text-[11px] font-bold"
           disabled={activeSession || configLoading}
         >
           {activeSession ? (
@@ -1601,12 +1602,13 @@ export default function LiveStreamControls({ activeSession, onStartStream, onSto
           <button
             type="button"
             onClick={onStopStream}
-            className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-rose-300 bg-rose-50 py-2 text-center text-xs font-bold text-rose-700 transition-colors hover:bg-rose-100 active:scale-[.99] dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-950/70"
+            className="live-stream-action flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg border border-rose-300 bg-rose-50 px-2 py-1.5 text-center text-[11px] font-bold text-rose-700 transition-colors hover:bg-rose-100 active:scale-[.99] dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-950/70"
           >
-            <span className="h-2.5 w-2.5 rounded-sm bg-current" />
+            <span className="h-2 w-2 rounded-sm bg-current" />
             Stop Streaming
           </button>
         )}
+        </div>
       </form>
 
       {largeSelectionConfirm && (
