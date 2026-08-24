@@ -29,6 +29,7 @@ export default function WebsocketLivePage() {
   const [mobileTab, setMobileTab] = useState("controls"); // 'controls', 'logs', 'feed'
 
   const socketRef = useRef(null);
+  const stopRequestedRef = useRef(false);
 
   const beginSidebarResize = (event) => {
     event.preventDefault();
@@ -58,6 +59,7 @@ export default function WebsocketLivePage() {
 
   const connectWS = (scrapeParams) => {
     try {
+      stopRequestedRef.current = false;
       if (socketRef.current) {
         socketRef.current.close();
       }
@@ -202,7 +204,12 @@ export default function WebsocketLivePage() {
 
       ws.onclose = () => {
         setWsStatus("disconnected");
-        log("WebSocket stream closed.", "system");
+        log(
+          stopRequestedRef.current
+            ? "Live stream stopped by user."
+            : "WebSocket stream closed.",
+          "system"
+        );
         setActiveSession(false);
         setProgress(null);
       };
@@ -213,6 +220,18 @@ export default function WebsocketLivePage() {
       setActiveSession(false);
       setProgress(null);
     }
+  };
+
+  const stopLiveStream = () => {
+    if (!socketRef.current) return;
+    stopRequestedRef.current = true;
+    log("Stopping live stream…", "system");
+    notifyInfo(dispatch, "Live stream stopping…");
+    socketRef.current.close(1000, "Stopped by user");
+    socketRef.current = null;
+    setActiveSession(false);
+    setProgress(null);
+    setWsStatus("disconnected");
   };
 
   useEffect(() => {
@@ -404,6 +423,7 @@ export default function WebsocketLivePage() {
             activeSession={activeSession}
             wsStatus={wsStatus}
             onStartStream={startLiveStream}
+            onStopStream={stopLiveStream}
             onToggleSidebar={() => setShowSidebar(false)}
           />
           <ProgressBar progress={progress} />
@@ -459,6 +479,7 @@ export default function WebsocketLivePage() {
               activeSession={activeSession}
               wsStatus={wsStatus}
               onStartStream={startLiveStream}
+              onStopStream={stopLiveStream}
             />
             <ProgressBar progress={progress} />
           </div>

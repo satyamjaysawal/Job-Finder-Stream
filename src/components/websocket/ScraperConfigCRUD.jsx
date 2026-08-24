@@ -371,7 +371,7 @@ export default function ScraperConfigCRUD({ onClose }) {
   };
 
   return (
-    <div className="panel w-full p-5">
+    <div className="scraper-config-compact panel w-full p-3">
       <div className="mb-5 flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-3.5 dark:border-slate-900">
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">

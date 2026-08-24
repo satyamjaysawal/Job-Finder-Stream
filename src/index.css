@@ -229,6 +229,27 @@
     min-height: 0;
   }
 
+  .live-page .scraper-config-compact {
+    font-size: .75rem;
+  }
+
+  .live-page .scraper-config-compact .input-field {
+    min-height: 2rem;
+    padding-top: .35rem;
+    padding-bottom: .35rem;
+    font-size: .6875rem;
+  }
+
+  .live-page .scraper-config-compact .panel {
+    border-radius: .75rem;
+    padding: .75rem;
+    box-shadow: none;
+  }
+
+  .live-page .scraper-config-compact h3 {
+    font-size: .75rem;
+  }
+
   /* Keep the desktop console inside the first viewport. Long-running
      content scrolls within its panel instead of pushing the page below fold.
      Mobile keeps the normal document flow and tabbed layout. */

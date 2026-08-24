@@ -190,7 +190,7 @@ const CUSTOM_GROUP_LABEL_CLASSES = [
   "text-teal-700 dark:text-teal-300",
 ];
 
-export default function LiveStreamControls({ activeSession, onStartStream, onToggleSidebar }) {
+export default function LiveStreamControls({ activeSession, onStartStream, onStopStream, onToggleSidebar }) {
   const dispatch = useAppDispatch();
   const { config, loading: configLoading } = useAppSelector((s) => s.config);
   const browseCompanies = useAppSelector((s) => s.ui.browseCompanies);
@@ -223,8 +223,10 @@ export default function LiveStreamControls({ activeSession, onStartStream, onTog
   const [customCity, setCustomCity] = useState("");
 
   const [selectedCountries, setSelectedCountries] = useState([]);
-  const [selectedSites, setSelectedSites] = useState(JOBSPY_SOURCES.map(([value]) => value));
+  const [selectedSites, setSelectedSites] = useState(["linkedin"]);
   const [companyOnly, setCompanyOnly] = useState("");
+  const [showJobSources, setShowJobSources] = useState(false);
+  const [showCompanyOnly, setShowCompanyOnly] = useState(false);
   const [useCustomCountry, setUseCustomCountry] = useState(false);
   const [customCountry, setCustomCountry] = useState("");
 
@@ -287,7 +289,7 @@ export default function LiveStreamControls({ activeSession, onStartStream, onTog
     setSelectedQueries([]);
     setSelectedCitiesList([]);
     setSelectedCountries([]);
-    setSelectedSites(JOBSPY_SOURCES.map(([value]) => value));
+    setSelectedSites(["linkedin"]);
     setCompanyOnly("");
     void cs;
     void cos;
@@ -560,7 +562,12 @@ export default function LiveStreamControls({ activeSession, onStartStream, onTog
     const finalQueries = queriesList;
     const finalCities = citiesList;
     const finalCountries = countriesList;
-    const finalSites = selectedSites.length ? selectedSites : JOBSPY_SOURCES.map(([value]) => value);
+    const finalSites = selectedSites;
+
+    if (finalSites.length === 0) {
+      notifyError(dispatch, "Select at least one job source.");
+      return;
+    }
 
     if (finalQueries.length === 0) {
       notifyError(
@@ -1216,22 +1223,25 @@ export default function LiveStreamControls({ activeSession, onStartStream, onTog
         </div>
 
         {/* JobSpy sources */}
-        <div className="rounded-xl border border-indigo-200/70 bg-indigo-50/50 p-3 dark:border-indigo-900/60 dark:bg-indigo-950/20">
-          <div className="mb-2 flex items-center justify-between gap-2">
-            <span className={sectionLabel}>Job sources</span>
+        <div className="rounded-xl border border-indigo-200/70 bg-indigo-50/50 p-2.5 dark:border-indigo-900/60 dark:bg-indigo-950/20">
+          <div className="flex items-center justify-between gap-2">
+            <button type="button" className="flex items-center gap-1.5 text-left" onClick={() => setShowJobSources((value) => !value)} aria-expanded={showJobSources}>
+              <span className={sectionLabel}>Job sources</span>
+              <span className="rounded-md border border-indigo-300/70 px-1.5 py-0.5 text-[9px] font-bold text-indigo-600 dark:border-indigo-700 dark:text-indigo-300">{showJobSources ? "Hide" : "Show"}</span>
+            </button>
             <button
               type="button"
-              className="cursor-pointer text-[10px] font-bold text-indigo-600 hover:underline dark:text-indigo-400"
+              className="cursor-pointer rounded-md border border-indigo-300/70 px-1.5 py-0.5 text-[9px] font-bold text-indigo-600 hover:bg-indigo-100 disabled:opacity-50 dark:border-indigo-700 dark:text-indigo-400 dark:hover:bg-indigo-950"
               disabled={activeSession}
               onClick={() => {
                 markTouched();
-                setSelectedSites(selectedSites.length === JOBSPY_SOURCES.length ? [] : JOBSPY_SOURCES.map(([value]) => value));
+                setSelectedSites(JOBSPY_SOURCES.map(([value]) => value));
               }}
             >
-              {selectedSites.length === JOBSPY_SOURCES.length ? "Deselect All" : "Select All"}
+              Select all
             </button>
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          {showJobSources && <div className="mt-2 flex flex-wrap gap-1.5">
             {JOBSPY_SOURCES.map(([value, label]) => {
               const selected = selectedSites.includes(value);
               return (
@@ -1250,14 +1260,20 @@ export default function LiveStreamControls({ activeSession, onStartStream, onTog
                 </label>
               );
             })}
-          </div>
-          <p className="mt-1.5 text-[10px] text-slate-500 dark:text-slate-400">Select all sources or only the job boards you want JobSpy to query.</p>
+          </div>}
+          <p className="mt-1.5 text-[10px] text-slate-500 dark:text-slate-400">{selectedSites.length ? `${selectedSites.length} source${selectedSites.length === 1 ? "" : "s"} selected` : "No source selected"}. LinkedIn is selected by default.</p>
         </div>
 
         {/* Company-only target */}
-        <div className="rounded-xl border border-emerald-200/70 bg-emerald-50/50 p-3 dark:border-emerald-900/60 dark:bg-emerald-950/20">
-          <label className={`${sectionLabel} mb-2 block`} htmlFor="live-company-only">Company only</label>
-          <div className="grid gap-2 sm:grid-cols-2">
+        <div className="rounded-xl border border-emerald-200/70 bg-emerald-50/50 p-2.5 dark:border-emerald-900/60 dark:bg-emerald-950/20">
+          <div className="flex items-center justify-between gap-2">
+            <button type="button" className="flex items-center gap-1.5 text-left" onClick={() => setShowCompanyOnly((value) => !value)} aria-expanded={showCompanyOnly}>
+              <span className={sectionLabel}>Company only</span>
+              <span className="rounded-md border border-emerald-300/70 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700 dark:border-emerald-700 dark:text-emerald-300">{showCompanyOnly ? "Hide" : "Show"}</span>
+            </button>
+            <button type="button" className="cursor-pointer rounded-md border border-emerald-300/70 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700 hover:bg-emerald-100 disabled:opacity-50 dark:border-emerald-700 dark:text-emerald-300 dark:hover:bg-emerald-950" disabled={activeSession || !companyOnly} onClick={() => { markTouched(); setCompanyOnly(""); }}>Deselect</button>
+          </div>
+          {showCompanyOnly && <div className="mt-2 grid gap-2 sm:grid-cols-2">
             <select
               id="live-company-only"
               className="input-field text-xs"
@@ -1275,8 +1291,8 @@ export default function LiveStreamControls({ activeSession, onStartStream, onTog
               placeholder="Or type a company name"
               onChange={(e) => { markTouched(); setCompanyOnly(e.target.value); }}
             />
-          </div>
-          <p className="mt-1.5 text-[10px] text-slate-500 dark:text-slate-400">Only matching employer names will be saved and streamed. Leave empty to search every company.</p>
+          </div>}
+          <p className="mt-1.5 text-[10px] text-slate-500 dark:text-slate-400">{companyOnly ? `Selected: ${companyOnly}` : "All companies"}. Only matching employer names will be streamed.</p>
         </div>
 
         {/* Companies pills */}
@@ -1581,6 +1597,16 @@ export default function LiveStreamControls({ activeSession, onStartStream, onTog
             </>
           )}
         </button>
+        {activeSession && onStopStream && (
+          <button
+            type="button"
+            onClick={onStopStream}
+            className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-rose-300 bg-rose-50 py-2 text-center text-xs font-bold text-rose-700 transition-colors hover:bg-rose-100 active:scale-[.99] dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-950/70"
+          >
+            <span className="h-2.5 w-2.5 rounded-sm bg-current" />
+            Stop Streaming
+          </button>
+        )}
       </form>
 
       {largeSelectionConfirm && (
