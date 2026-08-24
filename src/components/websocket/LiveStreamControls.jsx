@@ -1612,64 +1612,23 @@ export default function LiveStreamControls({ activeSession, onStartStream, onSto
       </form>
 
       {largeSelectionConfirm && (
-        <div className="large-selection-modal fixed inset-0 z-[4000] grid h-dvh w-screen place-items-center overflow-y-auto bg-slate-900/60 p-4 backdrop-blur-md animate-[fade-in_0.2s_ease-out]">
-          <div className="large-selection-dialog w-full max-w-md overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-5 shadow-xl dark:border-slate-800 dark:bg-slate-950 sm:p-6 animate-[scale-up_0.2s_cubic-bezier(0.16,1,0.3,1)]">
-            <div className="flex items-start gap-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.3c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                </svg>
+        <div className="large-selection-toast fixed right-4 top-4 z-[4000] w-[min( calc(100vw-2rem), 25rem)] rounded-xl border border-amber-300 bg-white p-3 shadow-2xl dark:border-amber-800 dark:bg-slate-950 animate-[fade-in_0.2s_ease-out]" role="alert">
+          <div className="flex items-start gap-2.5">
+            <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300">!</span>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="text-xs font-extrabold text-slate-900 dark:text-white">Large Selection Warning</h3>
+                <button type="button" className="text-xs text-slate-400 hover:text-slate-700 dark:hover:text-slate-200" onClick={() => setLargeSelectionConfirm(null)} aria-label="Close warning">×</button>
               </div>
-              <div className="min-w-0 flex-1">
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  Large Selection Warning
-                </h3>
-                <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                  You selected <strong className="font-semibold text-slate-750 dark:text-slate-200">{largeSelectionConfirm.queriesCount} queries × {largeSelectionConfirm.locationSlots} location(s)</strong> resulting in <span className="font-bold text-indigo-650 dark:text-indigo-400">{largeSelectionConfirm.comboCount} combinations</span>.
-                </p>
-                <div className="mt-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 p-3 text-[11px] font-semibold text-slate-655 dark:text-slate-350 space-y-1.5 border border-slate-100 dark:border-slate-800/60">
-                  <div className="flex justify-between gap-2">
-                    <span className="opacity-70">Geography:</span>
-                    <span className="truncate max-w-[200px]" title={largeSelectionConfirm.geoLabel}>
-                      {largeSelectionConfirm.geoLabel}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="opacity-70">Target Cap:</span>
-                    <span>≤{largeSelectionConfirm.strictTarget} jobs</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="opacity-70">Hits/Query:</span>
-                    <span>≤{largeSelectionConfirm.strictResultsPer}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="opacity-70">Recency:</span>
-                    <span>{largeSelectionConfirm.strictHoursOld}h limit</span>
-                  </div>
-                </div>
-                <p className="mt-4 text-xs font-semibold text-slate-600 dark:text-slate-300">
-                  Continue with this large selection?
-                </p>
+              <p className="mt-1 text-[11px] leading-snug text-slate-600 dark:text-slate-300">
+                {largeSelectionConfirm.queriesCount} queries × {largeSelectionConfirm.locationSlots} location(s) = <strong>{largeSelectionConfirm.comboCount} combinations</strong>.
+              </p>
+              <p className="mt-1 truncate text-[10px] text-slate-500 dark:text-slate-400" title={largeSelectionConfirm.geoLabel}>{largeSelectionConfirm.geoLabel}</p>
+              <p className="mt-1 text-[10px] text-slate-500 dark:text-slate-400">Target ≤{largeSelectionConfirm.strictTarget} · Hits/query ≤{largeSelectionConfirm.strictResultsPer} · {largeSelectionConfirm.strictHoursOld}h limit</p>
+              <div className="mt-2 flex items-center justify-end gap-1.5">
+                <button type="button" className="btn-ghost cursor-pointer rounded-md px-2 py-1 text-[10px]" onClick={() => setLargeSelectionConfirm(null)}>Cancel</button>
+                <button type="button" className="btn-primary cursor-pointer rounded-md px-2 py-1 text-[10px]" onClick={() => { onStartStream(largeSelectionConfirm.params); setLargeSelectionConfirm(null); }}>Continue</button>
               </div>
-            </div>
-            <div className="mt-6 flex items-center justify-end gap-3">
-              <button
-                type="button"
-                className="btn-ghost py-2 px-4 cursor-pointer text-xs"
-                onClick={() => setLargeSelectionConfirm(null)}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="btn-primary py-2 px-4 cursor-pointer text-xs"
-                onClick={() => {
-                  onStartStream(largeSelectionConfirm.params);
-                  setLargeSelectionConfirm(null);
-                }}
-              >
-                Yes, Continue
-              </button>
             </div>
           </div>
         </div>

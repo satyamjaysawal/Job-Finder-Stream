@@ -290,6 +290,20 @@
     overflow-y: auto;
   }
 
+  .large-selection-toast {
+    max-height: min(90dvh, 20rem);
+    overflow-y: auto;
+  }
+
+  @media (max-width: 639px) {
+    .large-selection-toast {
+      left: .75rem;
+      right: .75rem;
+      top: .75rem;
+      width: auto;
+    }
+  }
+
   .dashboard-compact .scraper-config-grid p {
     font-size: .5625rem;
     line-height: 1.3;
