@@ -265,22 +265,22 @@ export default function WebsocketLivePage() {
 
   return (
     <section className="page-shell live-page">
-      <div className="page-header workspace-hero">
-        <div>
+      <div className="live-analytics-header page-header workspace-hero">
+        <div className="live-analytics-copy min-w-0">
           <p className="page-kicker flex items-center gap-1.5"><span className="status-dot status-online !h-1.5 !w-1.5" /> Live Analytics</p>
           <h2 className="page-title">Live Scraper Console</h2>
           <p className="page-subtitle mt-2">
             Configure scraper inputs and watch job documents flow in real time over WebSockets.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="live-analytics-actions flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             className={`${
               showScraperConfig
                 ? "btn-primary"
                 : "btn-ghost"
-            } text-xs font-bold inline-flex items-center gap-1.5 rounded-xl cursor-pointer active:scale-95 duration-200`}
+            } inline-flex items-center gap-1.5 rounded-xl cursor-pointer active:scale-95 duration-200`}
             onClick={() => setShowScraperConfig((v) => !v)}
             aria-expanded={showScraperConfig}
           >
@@ -288,12 +288,12 @@ export default function WebsocketLivePage() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.43l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
             </svg>
-            {showScraperConfig ? "Hide Config" : "Configuration"}
+            {showScraperConfig ? "Hide Config" : "Scraper Configuration"}
           </button>
           
           <button
             type="button"
-            className={`text-xs font-extrabold inline-flex items-center gap-1.5 rounded-xl cursor-pointer active:scale-95 duration-200 shadow-sm px-3.5 py-2.5 transition-all ${
+            className={`inline-flex items-center gap-1.5 rounded-xl cursor-pointer active:scale-95 duration-200 shadow-sm transition-all ${
               showLogs
                 ? "bg-rose-600 border border-rose-600 text-white hover:bg-rose-500 hover:border-rose-500 dark:bg-rose-600 dark:border-rose-600 dark:hover:bg-rose-500"
                 : "bg-indigo-600 border border-indigo-600 text-white hover:bg-indigo-500 hover:border-indigo-500 dark:bg-indigo-500 dark:border-indigo-500 dark:hover:bg-indigo-400 shadow-indigo-600/10"
@@ -308,7 +308,7 @@ export default function WebsocketLivePage() {
           
           {/* Connection status badge */}
           <span
-            className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-black tracking-wide select-none ${
+            className={`inline-flex items-center gap-1.5 rounded-full border select-none ${
               wsStatus === "connected"
                 ? "border-emerald-300 bg-emerald-100 text-emerald-950 dark:border-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
                 : wsStatus === "connecting"
@@ -331,7 +331,7 @@ export default function WebsocketLivePage() {
           {wsStatus === "disconnected" && (
             <button
               type="button"
-              className="btn-primary text-xs font-black inline-flex items-center gap-1 py-2 px-3.5 rounded-xl cursor-pointer active:scale-95 shadow-md"
+              className="btn-primary inline-flex items-center gap-1 rounded-xl cursor-pointer active:scale-95 shadow-md"
               onClick={() => connectWS()}
             >
               Reconnect
