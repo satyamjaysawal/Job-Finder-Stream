@@ -189,7 +189,7 @@
   .workspace-hero > * { position: relative; z-index: 1; }
 
   .live-analytics-header {
-    gap: 1rem;
+    gap: .75rem;
   }
 
   .live-analytics-actions {
@@ -198,9 +198,9 @@
 
   .live-analytics-actions button,
   .live-analytics-actions > span {
-    min-height: 2.25rem;
-    padding: .5rem .75rem;
-    font-size: .6875rem;
+    min-height: 2rem;
+    padding: .375rem .625rem;
+    font-size: .625rem;
     line-height: 1;
   }
 
@@ -214,6 +214,21 @@
     @apply border-slate-300 bg-white text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-white;
   }
 
+  /* Compact live console: keep the complete workspace visible without
+     changing the sizing of panels on other pages. */
+  .live-page .panel {
+    border-radius: 1rem;
+    padding: 1rem;
+  }
+
+  .live-page .live-controls-panel {
+    font-size: .75rem;
+  }
+
+  .live-page .live-feed-panel {
+    min-height: 0;
+  }
+
   /* Keep the desktop console inside the first viewport. Long-running
      content scrolls within its panel instead of pushing the page below fold.
      Mobile keeps the normal document flow and tabbed layout. */
@@ -225,8 +240,9 @@
     }
 
     .live-page > .workspace-hero {
-      margin-bottom: 1rem;
-      padding: .875rem 1.25rem;
+      margin-bottom: .75rem;
+      padding: .75rem 1rem;
+      border-radius: 1rem;
     }
 
     .live-page > .workspace-hero .page-kicker {
@@ -236,7 +252,7 @@
 
     .live-page > .workspace-hero .page-title {
       margin-top: .25rem;
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       line-height: 1.15;
     }
 
@@ -248,9 +264,10 @@
     }
 
     .live-console-layout {
-      height: clamp(30rem, calc(100dvh - 18rem), 52rem);
+      height: clamp(28rem, calc(100dvh - 15rem), 52rem);
       flex: none;
       min-height: 0;
+      gap: .75rem;
     }
 
     .live-console-layout > div,
@@ -278,7 +295,17 @@
     .live-analytics-actions {
       flex-wrap: nowrap;
       justify-content: flex-end;
-      gap: .375rem;
+      gap: .25rem;
+    }
+
+    .live-console-results,
+    .live-page .live-console-results {
+      gap: .75rem;
+    }
+
+    .live-page .live-controls-panel,
+    .live-page .live-feed-panel {
+      padding: .875rem;
     }
   }
 

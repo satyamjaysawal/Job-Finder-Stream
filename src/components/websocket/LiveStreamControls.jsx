@@ -39,6 +39,16 @@ function mergeUnique(base = [], extra = []) {
   return out;
 }
 
+const JOBSPY_SOURCES = [
+  ["linkedin", "LinkedIn"],
+  ["indeed", "Indeed"],
+  ["glassdoor", "Glassdoor"],
+  ["zip_recruiter", "ZipRecruiter"],
+  ["google", "Google Jobs"],
+  ["bayt", "Bayt"],
+  ["naukri", "Naukri"],
+];
+
 function MutateChip({
   value,
   selected,
@@ -213,6 +223,8 @@ export default function LiveStreamControls({ activeSession, onStartStream, onTog
   const [customCity, setCustomCity] = useState("");
 
   const [selectedCountries, setSelectedCountries] = useState([]);
+  const [selectedSites, setSelectedSites] = useState(JOBSPY_SOURCES.map(([value]) => value));
+  const [companyOnly, setCompanyOnly] = useState("");
   const [useCustomCountry, setUseCustomCountry] = useState(false);
   const [customCountry, setCustomCountry] = useState("");
 
@@ -275,6 +287,8 @@ export default function LiveStreamControls({ activeSession, onStartStream, onTog
     setSelectedQueries([]);
     setSelectedCitiesList([]);
     setSelectedCountries([]);
+    setSelectedSites(JOBSPY_SOURCES.map(([value]) => value));
+    setCompanyOnly("");
     void cs;
     void cos;
 
@@ -546,6 +560,7 @@ export default function LiveStreamControls({ activeSession, onStartStream, onTog
     const finalQueries = queriesList;
     const finalCities = citiesList;
     const finalCountries = countriesList;
+    const finalSites = selectedSites.length ? selectedSites : JOBSPY_SOURCES.map(([value]) => value);
 
     if (finalQueries.length === 0) {
       notifyError(
@@ -618,7 +633,9 @@ export default function LiveStreamControls({ activeSession, onStartStream, onTog
       // Empty string = global (backend must not substitute Hyderabad/India)
       city: finalCities.join(","),
       countries: finalCountries.join(","),
+      companies: companyOnly.trim(),
       exclude_companies: selectedCompanies.join(","),
+      sites: finalSites,
       category: "all",
       target: strictTarget,
       results_per: strictResultsPer,
@@ -1196,6 +1213,70 @@ export default function LiveStreamControls({ activeSession, onStartStream, onTog
               </button>
             </div>
           )}
+        </div>
+
+        {/* JobSpy sources */}
+        <div className="rounded-xl border border-indigo-200/70 bg-indigo-50/50 p-3 dark:border-indigo-900/60 dark:bg-indigo-950/20">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <span className={sectionLabel}>Job sources</span>
+            <button
+              type="button"
+              className="cursor-pointer text-[10px] font-bold text-indigo-600 hover:underline dark:text-indigo-400"
+              disabled={activeSession}
+              onClick={() => {
+                markTouched();
+                setSelectedSites(selectedSites.length === JOBSPY_SOURCES.length ? [] : JOBSPY_SOURCES.map(([value]) => value));
+              }}
+            >
+              {selectedSites.length === JOBSPY_SOURCES.length ? "Deselect All" : "Select All"}
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {JOBSPY_SOURCES.map(([value, label]) => {
+              const selected = selectedSites.includes(value);
+              return (
+                <label key={value} className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2 py-1 text-[11px] font-bold transition-colors ${selected ? "border-indigo-500 bg-indigo-600 text-white" : "border-slate-300 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"}`}>
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={selected}
+                    disabled={activeSession}
+                    onChange={() => {
+                      markTouched();
+                      setSelectedSites((prev) => prev.includes(value) ? prev.filter((site) => site !== value) : [...prev, value]);
+                    }}
+                  />
+                  {selected ? "✓" : "○"} {label}
+                </label>
+              );
+            })}
+          </div>
+          <p className="mt-1.5 text-[10px] text-slate-500 dark:text-slate-400">Select all sources or only the job boards you want JobSpy to query.</p>
+        </div>
+
+        {/* Company-only target */}
+        <div className="rounded-xl border border-emerald-200/70 bg-emerald-50/50 p-3 dark:border-emerald-900/60 dark:bg-emerald-950/20">
+          <label className={`${sectionLabel} mb-2 block`} htmlFor="live-company-only">Company only</label>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <select
+              id="live-company-only"
+              className="input-field text-xs"
+              value={companyOnly}
+              disabled={activeSession}
+              onChange={(e) => { markTouched(); setCompanyOnly(e.target.value); }}
+            >
+              <option value="">All companies</option>
+              {mergeUnique(companies, extraCompanies).map((company) => <option key={company} value={company}>{company}</option>)}
+            </select>
+            <input
+              className="input-field text-xs"
+              value={companyOnly && !mergeUnique(companies, extraCompanies).some((item) => item.toLowerCase() === companyOnly.toLowerCase()) ? companyOnly : ""}
+              disabled={activeSession}
+              placeholder="Or type a company name"
+              onChange={(e) => { markTouched(); setCompanyOnly(e.target.value); }}
+            />
+          </div>
+          <p className="mt-1.5 text-[10px] text-slate-500 dark:text-slate-400">Only matching employer names will be saved and streamed. Leave empty to search every company.</p>
         </div>
 
         {/* Companies pills */}

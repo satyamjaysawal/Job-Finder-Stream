@@ -98,7 +98,9 @@ export default function WebsocketLivePage() {
               min_exp: scrapeParams.min_exp,
               max_exp: scrapeParams.max_exp,
               countries: scrapeParams.countries,
+              companies: scrapeParams.companies,
               exclude_companies: scrapeParams.exclude_companies,
+              sites: scrapeParams.sites,
               collection_name: scrapeParams.collection_name || "live_stream",
               name: scrapeParams.collection_name || "live_stream",
               strict_caps: true,
@@ -233,6 +235,8 @@ export default function WebsocketLivePage() {
     min_exp,
     max_exp,
     countries,
+    companies,
+    sites,
     collection_name,
     geo_label,
   }) => {
@@ -251,6 +255,8 @@ export default function WebsocketLivePage() {
       min_exp,
       max_exp,
       countries,
+      companies,
+      sites,
       collection_name: collection_name || "live_stream",
       geo_label,
     });
@@ -341,13 +347,13 @@ export default function WebsocketLivePage() {
       </div>
 
       {showScraperConfig && (
-        <div className="mb-6 w-full animate-[fade-up_0.3s_cubic-bezier(0.16,1,0.3,1)_forwards]">
+        <div className="mb-3 w-full animate-[fade-up_0.3s_cubic-bezier(0.16,1,0.3,1)_forwards]">
           <ScraperConfigCRUD onClose={() => setShowScraperConfig(false)} />
         </div>
       )}
 
       {/* Mobile Tab switcher (only visible below lg breakpoint) */}
-      <div className="mb-6 flex gap-1 rounded-2xl border border-white/15 bg-white/10 p-1.5 backdrop-blur-xl select-none lg:hidden dark:border-indigo-400/10 dark:bg-slate-950/40">
+      <div className="mb-3 flex gap-1 rounded-xl border border-white/15 bg-white/10 p-1 backdrop-blur-xl select-none lg:hidden dark:border-indigo-400/10 dark:bg-slate-950/40">
         <button
           type="button"
           className={`flex-1 py-2 text-center text-xs font-bold rounded-xl cursor-pointer transition-all duration-200 ${
@@ -384,11 +390,11 @@ export default function WebsocketLivePage() {
       </div>
 
       {/* Main Console Layout (Desktop: Split Panel Layout with Left/Right Sliding Sidebar Drawer) */}
-      <div className="live-console-layout hidden lg:flex relative min-h-0 flex-1 gap-4 xl:gap-6 items-stretch transition-all duration-300">
+      <div className="live-console-layout hidden lg:flex relative min-h-0 flex-1 gap-3 items-stretch transition-all duration-300">
         {/* Left Column: Stream controls sidebar slider */}
         <div
           style={showSidebar ? { width: `${sidebarWidth}px` } : undefined}
-          className={`relative shrink-0 flex flex-col gap-6 transition-all duration-300 ease-in-out ${
+          className={`relative shrink-0 flex flex-col gap-3 transition-all duration-300 ease-in-out ${
           showSidebar
             ? "min-w-96 opacity-100 translate-x-0"
             : "w-0 opacity-0 -translate-x-full overflow-hidden pointer-events-none"
@@ -430,7 +436,7 @@ export default function WebsocketLivePage() {
         )}
 
         {/* Right Column: Console terminal & real-time jobs feed */}
-        <div className="live-console-results flex-1 min-w-0 flex flex-col gap-6 transition-all duration-300 ease-in-out">
+        <div className="live-console-results flex-1 min-w-0 flex flex-col gap-3 transition-all duration-300 ease-in-out">
           {showLogs && (
             <div className="animate-[fade-up_0.3s_cubic-bezier(0.16,1,0.3,1)_forwards]">
               <LogsTerminal logs={logs} />
@@ -446,9 +452,9 @@ export default function WebsocketLivePage() {
       </div>
 
       {/* Mobile Tab-Filtered Views */}
-      <div className="flex flex-col gap-5 lg:hidden">
+      <div className="flex flex-col gap-3 lg:hidden">
         {mobileTab === "controls" && (
-          <div className="flex flex-col gap-5 animate-[fade-up_0.3s_cubic-bezier(0.16,1,0.3,1)_forwards]">
+          <div className="flex flex-col gap-3 animate-[fade-up_0.3s_cubic-bezier(0.16,1,0.3,1)_forwards]">
             <LiveStreamControls
               activeSession={activeSession}
               wsStatus={wsStatus}
