@@ -30,13 +30,28 @@
     transition: background-color 0.3s ease;
   }
 
+  body {
+    @apply font-sans antialiased;
+    width: 100%;
+    min-height: 100%;
+    min-height: 100dvh;
+    margin: 0;
+    overflow-x: hidden;
+    color: #0f172a;
+    background:
+      radial-gradient(1200px 600px at 0% 0%, rgba(99, 102, 241, 0.08), transparent 60%),
+      radial-gradient(1000px 600px at 100% 20%, rgba(139, 92, 246, 0.08), transparent 60%),
+      #f8fafc;
+    transition: background-color 0.3s ease;
+  }
+
   html.dark body,
   .dark body {
-    @apply text-slate-100;
+    color: #f8fafc;
     background:
-      radial-gradient(1200px 600px at 0% -10%, rgba(99, 102, 241, 0.12), transparent 50%),
-      radial-gradient(1000px 600px at 100% 0%, rgba(167, 139, 250, 0.08), transparent 50%),
-      #030712;
+      radial-gradient(1200px 600px at 0% -10%, rgba(99, 102, 241, 0.15), transparent 50%),
+      radial-gradient(1000px 600px at 100% 0%, rgba(167, 139, 250, 0.1), transparent 50%),
+      #090d16;
   }
 
   #root {
@@ -59,7 +74,7 @@
     @apply bg-transparent;
   }
   ::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-slate-300/60 transition hover:bg-slate-400/80 dark:bg-slate-800/80 dark:hover:bg-slate-700;
+    @apply rounded-full bg-slate-300 transition hover:bg-slate-400 dark:bg-slate-700 dark:hover:bg-slate-600;
   }
 }
 
@@ -80,9 +95,9 @@
     padding: 0;
   }
 
-  /* Photography lives on the page canvas, behind glass Tailwind panels. */
+  /* Page canvas with subtle accent grid */
   .page-canvas {
-    background-color: #eef2ff;
+    background-color: #f1f5f9;
   }
 
   .page-canvas::after {
@@ -90,48 +105,31 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    opacity: 0.45;
+    opacity: 0.35;
     background-image:
-      radial-gradient(42rem 30rem at 8% 12%, rgba(79, 70, 229, 0.14), transparent 70%),
-      radial-gradient(34rem 26rem at 94% 34%, rgba(168, 85, 247, 0.12), transparent 72%),
-      linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+      radial-gradient(42rem 30rem at 8% 12%, rgba(79, 70, 229, 0.1), transparent 70%),
+      radial-gradient(34rem 26rem at 94% 34%, rgba(168, 85, 247, 0.08), transparent 72%),
+      linear-gradient(rgba(99, 102, 241, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99, 102, 241, 0.06) 1px, transparent 1px);
     background-size: auto, auto, 32px 32px, 32px 32px;
     mask-image: linear-gradient(to bottom, black, transparent 88%);
   }
 
-  .app-shell--dashboard .page-canvas {
-    background-image:
-      linear-gradient(125deg, rgba(15, 23, 42, 0.78) 0%, rgba(15, 23, 42, 0.68) 48%, rgba(15, 23, 42, 0.58) 100%),
-      url("https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2200&q=85");
-  }
-
+  .app-shell--dashboard .page-canvas,
   .app-shell--websocket-live .page-canvas {
     background-image:
-      linear-gradient(125deg, rgba(15, 23, 42, 0.78) 0%, rgba(15, 23, 42, 0.68) 48%, rgba(15, 23, 42, 0.58) 100%),
+      linear-gradient(125deg, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.88) 50%, rgba(30, 27, 75, 0.85) 100%),
       url("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=2200&q=85");
-    background-position: 58% center;
+    background-position: center;
+    background-size: cover;
   }
 
   .dark .page-canvas {
-    background-color: #030712;
+    background-color: #090d16;
   }
 
   .dark .page-canvas::after {
-    opacity: 0.18;
-  }
-
-  .dark .app-shell--dashboard .page-canvas {
-    background-image:
-      linear-gradient(125deg, rgba(3, 7, 18, 0.88) 0%, rgba(3, 7, 18, 0.80) 48%, rgba(15, 23, 42, 0.74) 100%),
-      url("https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2200&q=85");
-  }
-
-  .dark .app-shell--websocket-live .page-canvas {
-    background-image:
-      linear-gradient(125deg, rgba(3, 7, 18, 0.88) 0%, rgba(3, 7, 18, 0.80) 48%, rgba(15, 23, 42, 0.74) 100%),
-      url("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=2200&q=85");
-    background-position: 58% center;
+    opacity: 0.2;
   }
 
   .page-shell {
@@ -165,7 +163,7 @@
   }
 
   .home-stat {
-    @apply rounded-2xl border border-white/15 bg-white/[0.09] px-4 py-3 backdrop-blur-md;
+    @apply rounded-2xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-md text-white;
   }
 
   .page-header {
@@ -173,7 +171,7 @@
   }
 
   .workspace-hero {
-    @apply relative overflow-hidden rounded-3xl border border-white/15 bg-white/25 px-5 py-5 backdrop-blur-xl dark:border-indigo-400/10 dark:bg-slate-950/40 sm:px-7 sm:py-6;
+    @apply relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white/90 px-6 py-6 shadow-lg backdrop-blur-xl dark:border-slate-800/80 dark:bg-slate-900/90 sm:px-7 sm:py-6;
   }
 
   .workspace-hero::after {
@@ -185,67 +183,52 @@
     height: 14rem;
     border-radius: 9999px;
     pointer-events: none;
-    background: radial-gradient(circle, rgba(99,102,241,.17), transparent 68%);
+    background: radial-gradient(circle, rgba(99,102,241,.25), transparent 68%);
   }
 
   .workspace-hero > * { position: relative; z-index: 1; }
 
   .dashboard-page .panel,
   .live-page .panel {
-    @apply border-white/15 bg-white/20 backdrop-blur-xl dark:border-indigo-400/10 dark:bg-slate-950/40;
+    @apply border-slate-200/90 bg-white/95 shadow-md backdrop-blur-xl dark:border-slate-800/90 dark:bg-slate-900/95 dark:shadow-2xl;
   }
 
   .dashboard-page .input-field,
   .live-page .input-field {
-    @apply border-white/15 bg-white/15 dark:border-slate-700/50 dark:bg-slate-950/40;
-  }
-
-  .dashboard-page .page-kicker,
-  .live-page .page-kicker {
-    @apply text-indigo-700 dark:text-indigo-300;
-  }
-
-  .dashboard-page .page-title,
-  .live-page .page-title {
-    @apply bg-gradient-to-r from-slate-950 via-indigo-900 to-violet-800 dark:from-white dark:via-indigo-100 dark:to-violet-200;
+    @apply border-slate-300 bg-white text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-white;
   }
 
   .page-kicker {
-    @apply text-[10px] font-bold uppercase tracking-[0.25em] text-indigo-600/90 dark:text-indigo-400;
+    @apply text-[11px] font-extrabold uppercase tracking-[0.25em] text-indigo-700 dark:text-indigo-400;
   }
 
   .page-title {
-    @apply mt-1.5 text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-3xl lg:text-4xl bg-gradient-to-r from-slate-900 via-indigo-950 to-indigo-900 bg-clip-text text-transparent dark:from-white dark:via-slate-100 dark:to-slate-300;
+    @apply mt-1.5 text-2xl font-black tracking-tight text-slate-900 dark:text-white sm:text-3xl lg:text-4xl;
   }
 
   .page-subtitle {
-    @apply mt-2 max-w-2xl text-sm leading-relaxed text-slate-500 dark:text-slate-400;
+    @apply mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-300 font-medium;
   }
 
   .panel {
-    @apply rounded-2xl border border-white/15 bg-white/20
-      backdrop-blur-xl transition-all duration-300 ease-out
-      dark:border-slate-800/40 dark:bg-slate-950/40;
+    @apply rounded-2xl border border-slate-200 bg-white/95 p-5 text-slate-900 shadow-md backdrop-blur-xl transition-all duration-300 ease-out dark:border-slate-800 dark:bg-slate-900/95 dark:text-slate-100 dark:shadow-2xl;
   }
 
   .panel-hover {
-    @apply hover:border-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/[0.03] hover:-translate-y-0.5
-      dark:hover:border-indigo-400/20 dark:hover:shadow-black/30;
+    @apply hover:border-indigo-500/40 hover:shadow-xl hover:shadow-indigo-500/10 hover:-translate-y-0.5 dark:hover:border-indigo-400/40 dark:hover:shadow-black/50;
   }
 
   .panel-muted {
-    @apply rounded-xl border border-white/10 bg-white/10
-      dark:border-slate-800/40 dark:bg-slate-900/30 backdrop-blur-md;
+    @apply rounded-xl border border-slate-200 bg-slate-50/90 dark:border-slate-800 dark:bg-slate-950/60 backdrop-blur-md;
   }
 
   .btn-primary {
-    @apply inline-flex w-auto max-w-max shrink-0 items-center justify-center gap-1.5
-      whitespace-nowrap rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4.5 py-2.5 text-sm font-semibold
-      text-white transition-all duration-300 ease-out
-      hover:from-indigo-500 hover:to-violet-500 hover:-translate-y-0.5
+    @apply inline-flex w-auto max-w-max shrink-0 items-center justify-center gap-2
+      whitespace-nowrap rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-xs font-black uppercase tracking-wider
+      text-white shadow-md transition-all duration-300 ease-out
+      hover:from-indigo-500 hover:to-violet-500 hover:shadow-indigo-500/25 hover:-translate-y-0.5
       active:scale-[0.96]
-      disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 disabled:hover:translate-y-0
-      dark:from-indigo-500 dark:to-violet-500 dark:hover:from-indigo-400 dark:hover:to-violet-400;
+      disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 disabled:hover:translate-y-0;
   }
 
   .btn-primary:focus-visible,
@@ -254,49 +237,49 @@
   a:focus-visible,
   input:focus-visible,
   select:focus-visible {
-    @apply outline-none ring-4 ring-indigo-500/25 ring-offset-2 ring-offset-transparent;
+    @apply outline-none ring-4 ring-indigo-500/30 ring-offset-2 ring-offset-transparent;
   }
 
   .btn-ghost {
     @apply inline-flex w-auto max-w-max shrink-0 items-center justify-center gap-1.5
-      whitespace-nowrap rounded-xl border border-white/15 bg-white/10 px-4.5 py-2.5
-      text-sm font-semibold text-slate-200 backdrop-blur-md transition-all duration-300 ease-out
-      hover:border-white/25 hover:bg-white/15 hover:-translate-y-0.5
+      whitespace-nowrap rounded-xl border border-slate-300 bg-slate-100 px-4 py-2 text-xs font-extrabold
+      text-slate-800 shadow-xs backdrop-blur-md transition-all duration-200 ease-out
+      hover:border-slate-400 hover:bg-slate-200 hover:text-slate-950 hover:-translate-y-0.5
       active:scale-[0.96]
       disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 disabled:hover:translate-y-0
-      dark:border-slate-700/60 dark:bg-slate-950/30 dark:text-slate-200
-      dark:hover:border-slate-600 dark:hover:bg-slate-900/60;
+      dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200
+      dark:hover:border-slate-600 dark:hover:bg-slate-700 dark:hover:text-white;
   }
 
   .btn-danger {
     @apply inline-flex w-auto max-w-max shrink-0 items-center justify-center gap-1.5
-      whitespace-nowrap rounded-xl border border-rose-200/30 bg-rose-50/30 px-3 py-1.5
-      text-xs font-semibold text-rose-600 shadow-sm transition-all duration-300 ease-out
-      hover:border-rose-300 hover:bg-rose-500 hover:text-white hover:-translate-y-0.5
+      whitespace-nowrap rounded-xl border border-rose-300 bg-rose-50 px-3.5 py-1.5
+      text-xs font-black text-rose-700 shadow-xs transition-all duration-200 ease-out
+      hover:border-rose-400 hover:bg-rose-600 hover:text-white hover:-translate-y-0.5
       active:scale-[0.96]
       disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 disabled:hover:translate-y-0
-      dark:border-rose-950/30 dark:bg-rose-950/15 dark:text-rose-400
-      dark:hover:bg-rose-500 dark:hover:text-white;
+      dark:border-rose-800 dark:bg-rose-950/60 dark:text-rose-300
+      dark:hover:bg-rose-600 dark:hover:text-white;
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-slate-200/70 bg-white/40 px-4 py-2.5 text-sm text-slate-950
-      outline-none transition-all duration-300 placeholder:text-slate-400 backdrop-blur-md
-      focus:border-indigo-500 focus:bg-white/80 focus:ring-4 focus:ring-indigo-500/10
-      dark:border-slate-800/75 dark:bg-slate-950/35 dark:text-slate-50 dark:placeholder:text-slate-500
-      dark:focus:border-indigo-400 dark:focus:bg-slate-950/75 dark:focus:ring-indigo-400/10;
+    @apply w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-bold text-slate-900
+      outline-none transition-all duration-200 placeholder:text-slate-400 placeholder:font-normal
+      focus:border-indigo-600 focus:bg-white focus:ring-4 focus:ring-indigo-500/20
+      dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500
+      dark:focus:border-indigo-400 dark:focus:bg-slate-950 dark:focus:ring-indigo-400/20;
   }
 
   .chip {
-    @apply inline-flex items-center gap-1 rounded-full border border-slate-200/50 bg-slate-100/50
-      px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-500
-      dark:border-slate-800/60 dark:bg-slate-900/40 dark:text-slate-400;
+    @apply inline-flex items-center gap-1 rounded-full border border-slate-300 bg-slate-100
+      px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-700
+      dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200;
   }
 
   .chip-accent {
-    @apply inline-flex items-center gap-1 rounded-full border border-indigo-200/30 bg-indigo-50/50
-      px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-indigo-600
-      dark:border-indigo-900/30 dark:bg-indigo-950/30 dark:text-indigo-400;
+    @apply inline-flex items-center gap-1 rounded-full border border-indigo-300 bg-indigo-50
+      px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-indigo-700
+      dark:border-indigo-800 dark:bg-indigo-950 dark:text-indigo-300;
   }
 
   .status-dot {
@@ -304,20 +287,20 @@
   }
 
   .status-online {
-    @apply bg-emerald-500 shadow-[0_0_0_4px_rgba(16,185,129,0.15)] animate-[pulse-glow_2s_infinite];
+    @apply bg-emerald-500 shadow-[0_0_0_4px_rgba(16,185,129,0.2)] animate-[pulse-glow_2s_infinite];
   }
 
   .status-offline {
-    @apply bg-rose-500 shadow-[0_0_0_4px_rgba(244,63,94,0.15)];
+    @apply bg-rose-500 shadow-[0_0_0_4px_rgba(244,63,94,0.2)];
   }
 
   .status-warn {
-    @apply bg-amber-500 shadow-[0_0_0_4px_rgba(245,158,11,0.15)] animate-[pulse-glow_2s_infinite];
+    @apply bg-amber-500 shadow-[0_0_0_4px_rgba(245,158,11,0.2)] animate-[pulse-glow_2s_infinite];
   }
 
   .section-card-title {
-    @apply mb-3.5 border-b border-slate-100/70 pb-3 text-xs font-bold uppercase tracking-widest
-      text-slate-500 dark:border-slate-900/70 dark:text-slate-400;
+    @apply mb-3.5 border-b border-slate-200/80 pb-3 text-xs font-black uppercase tracking-widest
+      text-indigo-700 dark:border-slate-800 dark:text-indigo-400;
   }
 
   .empty-state {

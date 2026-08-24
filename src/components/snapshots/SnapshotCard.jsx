@@ -168,7 +168,7 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
             {isLiveStream ? (
-              <span className="inline-flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400 select-none">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-300 select-none">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
@@ -176,31 +176,31 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
                 Live Stream Run
               </span>
             ) : (
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-450 dark:text-slate-500 select-none">
+              <span className="text-[10px] font-black uppercase tracking-widest text-indigo-700 dark:text-indigo-300 select-none">
                 Database Snapshot
               </span>
             )}
           </div>
           <h3
-            className="mt-2.5 break-all text-sm font-extrabold leading-snug tracking-tight text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"
+            className="mt-2.5 break-all text-base font-black leading-snug tracking-tight text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"
             title={collectionName}
           >
             {collectionName}
           </h3>
           {isAdmin && item.owner_email && (
-            <p className="mt-1 truncate text-[10px] font-semibold text-slate-400" title={item.owner_email}>
+            <p className="mt-1 truncate text-xs font-bold text-slate-700 dark:text-slate-300" title={item.owner_email}>
               {item.owner_name || "User"} · {item.owner_email}
             </p>
           )}
-          <p className="mt-2 text-xs font-bold text-slate-450 dark:text-slate-500 flex items-center gap-1">
-            <svg className="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <p className="mt-2 text-xs font-extrabold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+            <svg className="h-4 w-4 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             {formatWhen(item.created_at)}
             {item.status && item.status !== "completed" ? (
               <>
-                <span className="text-slate-350 dark:text-slate-700">·</span>
-                <span className="text-amber-600 font-bold dark:text-amber-400 animate-pulse capitalize">
+                <span className="text-slate-400">·</span>
+                <span className="text-amber-600 font-black dark:text-amber-400 animate-pulse capitalize">
                   {item.status}
                 </span>
               </>
@@ -210,12 +210,12 @@ export default function SnapshotCard({ item, active, open, opening, deleting }) 
         
         <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5">
           {active && (
-            <span className="inline-flex items-center rounded-full bg-indigo-50 border border-indigo-150 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-indigo-700 dark:bg-indigo-950/40 dark:border-indigo-900/60 dark:text-indigo-400">
+            <span className="inline-flex items-center rounded-full bg-indigo-600 text-white px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider shadow-xs">
               Active
             </span>
           )}
-          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 border border-slate-200/60 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-slate-600 dark:bg-slate-900/70 dark:border-slate-800 dark:text-slate-400">
-            <svg className="h-3 w-3 text-slate-450 dark:text-slate-550" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-200 border border-slate-300 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-900 dark:bg-slate-800 dark:border-slate-700 dark:text-white shadow-xs">
+            <svg className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             {item.job_count ?? 0} jobs

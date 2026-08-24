@@ -66,26 +66,26 @@ export default function SnapshotStats({ totalCollections, totalJobsTracked }) {
 
           <div className="relative z-10 flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+              <p className="text-[10.5px] font-black uppercase tracking-widest text-indigo-700 dark:text-indigo-300">
                 {item.label}
               </p>
               <p
                 className={`mt-2.5 truncate text-slate-950 dark:text-white leading-none ${
                   item.large
-                    ? "text-3xl font-extrabold tracking-tight"
-                    : "text-[15px] font-extrabold tracking-wide"
+                    ? "text-3xl font-black tracking-tight"
+                    : "text-[15px] font-black tracking-wide"
                 }`}
               >
                 {item.value}
               </p>
             </div>
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white border border-slate-150/70 dark:bg-slate-900/70 dark:border-slate-800 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-950 shadow-sm shadow-slate-900/[0.01]">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white border border-slate-300 dark:bg-slate-900 dark:border-slate-700 transition-colors group-hover:bg-slate-50 dark:group-hover:bg-slate-950 shadow-sm">
               {item.icon}
             </div>
           </div>
 
-          <p className="relative z-10 mt-3.5 text-[10px] font-semibold text-slate-450 dark:text-slate-500 flex items-center gap-1.5 select-none">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-350 dark:bg-slate-700" />
+          <p className="relative z-10 mt-3.5 text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5 select-none">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 dark:bg-indigo-400" />
             {item.desc}
           </p>
         </div>

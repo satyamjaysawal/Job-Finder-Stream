@@ -51,7 +51,6 @@ export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [role, setRole] = useState("user");
 
   const busy = status === "loading";
 
@@ -60,7 +59,7 @@ export default function AuthPage() {
     if (mode === "login") {
       dispatch(login({ email, password }));
     } else {
-      dispatch(register({ email, password, name, role }));
+      dispatch(register({ email, password, name }));
     }
   };
 
@@ -93,21 +92,6 @@ export default function AuthPage() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Your name"
                 />
-              </label>
-              <label className="block text-sm text-indigo-100/70">
-                Role
-                <select
-                  className={AUTH_FIELD}
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                >
-                  <option value="user" className="text-slate-900">
-                    User
-                  </option>
-                  <option value="admin" className="text-slate-900">
-                    Admin
-                  </option>
-                </select>
               </label>
             </>
           )}

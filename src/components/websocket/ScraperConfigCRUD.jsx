@@ -6,13 +6,19 @@ import {
   addQuery,
   editQuery,
   removeQuery,
+  addQueryGroup,
+  removeQueryGroup,
   addCity,
   editCity,
   removeCity,
   addCountry,
   editCountry,
   removeCountry,
+  addCompany,
+  editCompany,
+  removeCompany,
 } from "../../store/slices/configSlice";
+import { groupLabel, queryGroupsFromConfig } from "../../utils/queryGroups";
 
 function ConfigListPanel({
   title,
@@ -22,6 +28,7 @@ function ConfigListPanel({
   onEdit,
   onRemove,
   hint,
+  addLabel = "Add",
 }) {
   const [newValue, setNewValue] = useState("");
   const [editing, setEditing] = useState(null);
@@ -29,7 +36,7 @@ function ConfigListPanel({
   const [isExpanded, setIsExpanded] = useState(false);
 
   const tagClass =
-    "inline-flex items-center gap-1.5 rounded-xl border border-slate-200/60 bg-white/60 px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-350 dark:hover:border-slate-700 backdrop-blur-sm";
+    "inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-black text-slate-900 shadow-xs hover:border-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:border-slate-600";
 
   const startEdit = (value) => {
     setEditing(value);
@@ -48,7 +55,7 @@ function ConfigListPanel({
     <div className="panel-muted flex flex-col justify-between space-y-3.5 p-4">
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-2">
-          <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          <h4 className="text-xs font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
             {title} ({items?.length || 0})
           </h4>
           <button
@@ -127,7 +134,9 @@ function ConfigListPanel({
                   type="button"
                   className="ml-0.5 cursor-pointer font-bold text-slate-400 transition hover:text-rose-600 dark:hover:text-rose-400"
                   title="Delete Item"
-                  onClick={() => onRemove(item)}
+                  onClick={() => {
+                    if (window.confirm(`Delete "${item}" from the database?`)) onRemove(item);
+                  }}
                 >
                   ✕
                 </button>
@@ -164,7 +173,81 @@ function ConfigListPanel({
             }
           }}
         >
-          Add
+          {addLabel}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Department manager — Developer & HR are built-in; users can add/remove
+ * custom departments. Each department gets its own query list everywhere
+ * Stream parameters renders groups.
+ */
+function DepartmentPanel({ departments, onAdd, onRemove }) {
+  const [name, setName] = useState("");
+
+  const tagClass =
+    "inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-black text-slate-900 shadow-xs hover:border-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:border-slate-600";
+
+  const submit = () => {
+    const next = name.trim();
+    if (!next) return;
+    onAdd(next);
+    setName("");
+  };
+
+  return (
+    <div className="panel-muted flex flex-col justify-between space-y-3.5 p-4">
+      <div className="space-y-2">
+        <h4 className="text-xs font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
+          Departments ({departments.length + 2})
+        </h4>
+        <p className="text-[10px] leading-snug text-slate-400 dark:text-slate-500">
+          Developer &amp; HR are built-in. Add your own departments — each one
+          gets its own query list in Stream parameters. Deleting a department
+          reverts its queries to auto-classification.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <span className={tagClass}>Developer</span>
+          <span className={tagClass}>HR</span>
+          {departments.map((g) => (
+            <span key={g} className={tagClass}>
+              {groupLabel(g)}
+              <button
+                type="button"
+                className="ml-0.5 cursor-pointer font-bold text-slate-400 transition hover:text-rose-600 dark:hover:text-rose-400"
+                title={`Delete department "${groupLabel(g)}"`}
+                onClick={() => onRemove(g)}
+              >
+                ✕
+              </button>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex gap-2 border-t border-slate-200/30 pt-3 dark:border-slate-800">
+        <input
+          type="text"
+          placeholder="e.g. Sales, Data, Marketing…"
+          className="input-field flex-1 py-1.5 text-xs"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              submit();
+            }
+          }}
+        />
+        <button
+          type="button"
+          className="btn-ghost cursor-pointer rounded-lg px-3 py-1.5 text-xs font-semibold"
+          onClick={submit}
+        >
+          + Add department
         </button>
       </div>
     </div>
@@ -231,23 +314,61 @@ export default function ScraperConfigCRUD({ onClose }) {
   };
 
   const runAdd = async (thunk, value) => {
-    await dispatch(thunk(value));
-    await dispatch(fetchConfig());
+    try {
+      await dispatch(thunk(value)).unwrap();
+      await dispatch(fetchConfig());
+    } catch {
+      /* toast already shown by thunk */
+    }
   };
 
   const runEdit = async (thunk, oldValue, newValue) => {
-    await dispatch(thunk({ oldValue, newValue }));
-    await dispatch(fetchConfig());
+    try {
+      await dispatch(thunk({ oldValue, newValue })).unwrap();
+      await dispatch(fetchConfig());
+    } catch {
+      /* toast already shown by thunk */
+    }
   };
 
   const runRemove = async (thunk, value) => {
-    await dispatch(thunk(value));
-    await dispatch(fetchConfig());
+    try {
+      await dispatch(thunk(value)).unwrap();
+      await dispatch(fetchConfig());
+    } catch {
+      /* toast already shown by thunk */
+    }
   };
 
   const updatedLabel = config?.updated_at
     ? String(config.updated_at).slice(0, 19)
     : "—";
+  const queryGroups = queryGroupsFromConfig(config);
+  const customGroups = Array.isArray(config?.custom_query_groups)
+    ? config.custom_query_groups
+    : [];
+
+  const handleAddDepartment = async (name) => {
+    try {
+      await dispatch(addQueryGroup(name)).unwrap();
+      await dispatch(fetchConfig());
+    } catch {
+      /* toast already shown by thunk */
+    }
+  };
+
+  const handleRemoveDepartment = async (groupKey) => {
+    const ok = window.confirm(
+      `Delete department "${groupLabel(groupKey)}"? Its queries will revert to auto-classification.`
+    );
+    if (!ok) return;
+    try {
+      await dispatch(removeQueryGroup(groupKey)).unwrap();
+      await dispatch(fetchConfig());
+    } catch {
+      /* toast already shown by thunk */
+    }
+  };
 
   return (
     <div className="panel w-full p-5">
@@ -416,20 +537,45 @@ export default function ScraperConfigCRUD({ onClose }) {
           </button>
         </form>
 
+        {Object.keys(queryGroups).map((groupKey) => {
+          const label = groupLabel(groupKey);
+          return (
+            <ConfigListPanel
+              key={groupKey}
+              title={`${label} queries`}
+              items={queryGroups[groupKey]}
+              placeholder={`Add ${label} query…`}
+              addLabel="+ Custom"
+              hint={`Live scrape → ${label} queries. Click a chip to edit, ✕ to delete.`}
+              onAdd={(v) => runAdd(addQuery, { query: v, group: groupKey })}
+              onEdit={(oldV, newV) => runEdit(editQuery, oldV, newV)}
+              onRemove={(v) => runRemove(removeQuery, v)}
+            />
+          );
+        })}
+
+        <DepartmentPanel
+          departments={customGroups}
+          onAdd={handleAddDepartment}
+          onRemove={handleRemoveDepartment}
+        />
+
         <ConfigListPanel
-          title="Search queries"
-          items={config.search_queries}
-          placeholder="Add query…"
-          hint="Shown under Stream parameters → Queries"
-          onAdd={(v) => runAdd(addQuery, v)}
-          onEdit={(oldV, newV) => runEdit(editQuery, oldV, newV)}
-          onRemove={(v) => runRemove(removeQuery, v)}
+          title="Companies"
+          items={config.top_companies}
+          placeholder="Add company…"
+          addLabel="+ Custom"
+          hint="Live scrape company shortlist. Select/deselect there; add/edit/delete here."
+          onAdd={(v) => runAdd(addCompany, v)}
+          onEdit={(oldV, newV) => runEdit(editCompany, oldV, newV)}
+          onRemove={(v) => runRemove(removeCompany, v)}
         />
 
         <ConfigListPanel
           title="Cities"
           items={config.cities}
           placeholder="Add city…"
+          addLabel="+ Custom"
           hint="Shown under Stream parameters → Cities"
           onAdd={(v) => runAdd(addCity, v)}
           onEdit={(oldV, newV) => runEdit(editCity, oldV, newV)}
@@ -440,6 +586,7 @@ export default function ScraperConfigCRUD({ onClose }) {
           title="Countries"
           items={config.countries}
           placeholder="Add country…"
+          addLabel="+ Custom"
           hint="Shown under Stream parameters → Countries"
           onAdd={(v) => runAdd(addCountry, v)}
           onEdit={(oldV, newV) => runEdit(editCountry, oldV, newV)}

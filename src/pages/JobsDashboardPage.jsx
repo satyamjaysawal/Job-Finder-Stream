@@ -8,6 +8,10 @@ import SnapshotStats from "../components/snapshots/SnapshotStats";
 import SnapshotCard from "../components/snapshots/SnapshotCard";
 import JobCard from "../components/JobCard";
 import { formatWhen } from "../utils/display";
+import { fetchConfig, addCompany, removeCompany } from "../store/slices/configSlice";
+import { setBrowseCompanies, toggleBrowseCompany } from "../store/slices/uiSlice";
+import { companiesMatch, uniqueCanonicalCompanies } from "../utils/companies";
+import { notifyError, notifySuccess } from "../store/notify";
 
 const parseTimeToMinutes = (ta) => {
   if (!ta) return Infinity;
@@ -43,6 +47,19 @@ const parseTimeToMinutes = (ta) => {
   return Infinity;
 };
 
+const TOP_COMPANY_GROUPS = [
+  {
+    label: "Top MNCs",
+    companies: ["Accenture", "TCS", "Infosys", "Wipro", "HCLTech", "Cognizant", "Capgemini", "IBM", "Deloitte", "EY"],
+  },
+  {
+    label: "Top product companies",
+    companies: ["Google", "Microsoft", "Amazon", "Apple", "Meta", "Adobe", "Salesforce", "Atlassian", "Oracle", "SAP"],
+  },
+];
+
+const TOP_COMPANIES = TOP_COMPANY_GROUPS.flatMap((group) => group.companies);
+
 export default function JobsDashboardPage() {
   const dispatch = useAppDispatch();
   const {
@@ -57,6 +74,8 @@ export default function JobsDashboardPage() {
     activeJsonMeta,
   } = useAppSelector((s) => s.scrapeJson);
   const isAdmin = useAppSelector((s) => s.auth.user?.role === "admin");
+  const config = useAppSelector((s) => s.config.config);
+  const browseCompanies = useAppSelector((s) => s.ui.browseCompanies);
 
   const [search, setSearch] = useState("");
   const [snapshotSearch, setSnapshotSearch] = useState("");
@@ -72,6 +91,14 @@ export default function JobsDashboardPage() {
   const [filterExperience, setFilterExperience] = useState("all");
   const [filterHrContact, setFilterHrContact] = useState("all");
   const [filterHrRole, setFilterHrRole] = useState("all");
+  const [showTopCompanies, setShowTopCompanies] = useState(true);
+  const [customCompany, setCustomCompany] = useState("");
+  const catalogCompanies = useMemo(() => {
+    if (Array.isArray(config?.top_companies) && config.top_companies.length) {
+      return config.top_companies;
+    }
+    return TOP_COMPANIES;
+  }, [config?.top_companies]);
 
   const queriesList = useMemo(() => {
     if (!activeJsonMeta?.search_term) return [];
@@ -83,6 +110,7 @@ export default function JobsDashboardPage() {
 
   useEffect(() => {
     dispatch(fetchScrapeJsonList({ quiet: true }));
+    dispatch(fetchConfig());
   }, [dispatch]);
 
   useEffect(() => {
@@ -113,7 +141,8 @@ export default function JobsDashboardPage() {
       filterExperience !== "all" ||
       filterHrContact !== "all" ||
       filterHrRole !== "all" ||
-      sortBy !== "default"
+      sortBy !== "default" ||
+      browseCompanies.length > 0
     );
   }, [
     search,
@@ -126,6 +155,7 @@ export default function JobsDashboardPage() {
     filterHrContact,
     filterHrRole,
     sortBy,
+    browseCompanies,
   ]);
 
   const handleResetFilters = () => {
@@ -139,6 +169,7 @@ export default function JobsDashboardPage() {
     setFilterHrContact("all");
     setFilterHrRole("all");
     setSortBy("default");
+    dispatch(setBrowseCompanies([]));
   };
 
   const totalCollections = jobCollections.length;
@@ -160,14 +191,50 @@ export default function JobsDashboardPage() {
   }, [activeJobs]);
 
   const uniqueCompanies = useMemo(() => {
-    const compSet = new Set();
-    activeJobs.forEach((job) => {
-      if (job.company && job.company !== "Unknown") {
-        compSet.add(job.company.trim());
-      }
-    });
-    return Array.from(compSet).sort();
-  }, [activeJobs]);
+    return uniqueCanonicalCompanies(
+      activeJobs.map((job) => job.company_raw || job.company),
+      catalogCompanies
+    );
+  }, [activeJobs, catalogCompanies]);
+
+  const listedTopCompanies = useMemo(
+    () => new Set(catalogCompanies.map((company) => company.toLowerCase())),
+    [catalogCompanies]
+  );
+
+  const toggleTopCompany = (company) => {
+    dispatch(toggleBrowseCompany(company));
+  };
+
+  const addCustomCompany = async () => {
+    const company = customCompany.trim();
+    if (!company) {
+      notifyError(dispatch, "Enter a company first.");
+      return;
+    }
+    if (catalogCompanies.some((item) => item.toLowerCase() === company.toLowerCase())) {
+      notifyError(dispatch, `"${company}" is already in the list.`);
+      return;
+    }
+    setCustomCompany("");
+    try {
+      await dispatch(addCompany(company)).unwrap();
+    } catch {
+      /* duplicate / permission toast already shown */
+    }
+  };
+
+  const removeShortlistCompany = async (company) => {
+    const label = String(company || "").trim();
+    if (!label) return;
+    if (!window.confirm(`Remove "${label}" from the company list?`)) return;
+    dispatch(setBrowseCompanies(browseCompanies.filter((item) => item.toLowerCase() !== label.toLowerCase())));
+    try {
+      await dispatch(removeCompany(label)).unwrap();
+    } catch {
+      notifySuccess(dispatch, `"${label}" removed from this shortlist.`);
+    }
+  };
 
   const filteredJobs = useMemo(() => {
     let result = [...activeJobs];
@@ -189,10 +256,16 @@ export default function JobsDashboardPage() {
       });
     }
 
+    if (browseCompanies.length > 0) {
+      result = result.filter(
+        (job) => !companiesMatch(job.company_raw || job.company, browseCompanies)
+      );
+    }
+
     if (filterCompany !== "all") {
-      result = result.filter((job) => {
-        return (job.company || "").trim().toLowerCase() === filterCompany.toLowerCase();
-      });
+      result = result.filter((job) =>
+        companiesMatch(job.company_raw || job.company, filterCompany)
+      );
     }
 
     if (filterEasyApply === "easy_apply") {
@@ -458,6 +531,22 @@ export default function JobsDashboardPage() {
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setShowTopCompanies((open) => !open)}
+                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-bold transition-colors cursor-pointer active:scale-95 ${
+                    showTopCompanies
+                      ? "border-indigo-600 bg-indigo-600 text-white"
+                      : "border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 dark:border-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-950/70"
+                  }`}
+                  aria-expanded={showTopCompanies}
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 0 0-8 0c0 1.657-1.343 3-3 3v2h14v-2c-1.657 0-3-1.343-3-3Z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 16h6" />
+                  </svg>
+                  Top companies
+                </button>
                 {hasActiveFilters && (
                   <button
                     type="button"
@@ -479,15 +568,116 @@ export default function JobsDashboardPage() {
               </div>
             </div>
 
+            {showTopCompanies && (
+              <div className="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 via-white to-violet-50 p-4 shadow-sm dark:border-indigo-900/70 dark:from-indigo-950/30 dark:via-slate-950 dark:to-violet-950/20">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-black text-indigo-900 dark:text-indigo-200">Companies</h3>
+                    <p className="mt-0.5 text-[11px] text-slate-600 dark:text-slate-400">
+                      Red = exclude from this collection. White = included with all other companies · ({browseCompanies.length} excluded)
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => dispatch(setBrowseCompanies(catalogCompanies))}
+                      className="rounded-lg border border-indigo-200 bg-white px-2.5 py-1 text-[11px] font-bold text-indigo-700 transition-colors hover:bg-indigo-100 dark:border-indigo-800 dark:bg-slate-900 dark:text-indigo-300 dark:hover:bg-indigo-950 cursor-pointer"
+                    >
+                      Exclude all
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => dispatch(setBrowseCompanies([]))}
+                      className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-bold text-slate-600 transition-colors hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 cursor-pointer"
+                    >
+                      Include all
+                    </button>
+                  </div>
+                </div>
+                <div className="grid gap-3 md:grid-cols-2">
+                  {[...TOP_COMPANY_GROUPS.map((group) => ({
+                    ...group,
+                    companies: group.companies.filter((company) =>
+                      catalogCompanies.some((item) => item.toLowerCase() === company.toLowerCase())
+                    ),
+                  })).filter((group) => group.companies.length), ...(catalogCompanies.some((company) => !TOP_COMPANIES.includes(company)) ? [{
+                    label: "Custom companies",
+                    companies: catalogCompanies.filter((company) => !TOP_COMPANIES.includes(company)),
+                  }] : [])].map(({ label, companies }) => (
+                    <section key={label} className="rounded-lg border border-white/80 bg-white/70 p-2.5 dark:border-slate-700 dark:bg-slate-900/60">
+                      <h4 className="mb-2 text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-300">{label}</h4>
+                      <div className="flex flex-wrap gap-1.5">
+                        {companies.map((company) => {
+                          const selected = browseCompanies.some((item) => item.toLowerCase() === company.toLowerCase());
+                          return (
+                            <span key={company} className="inline-flex items-center">
+                              <button
+                                type="button"
+                                onClick={() => toggleTopCompany(company)}
+                                aria-pressed={selected}
+                                className={`rounded-l-lg border px-2 py-1 text-[11px] font-bold transition-colors cursor-pointer active:scale-95 ${
+                                  selected
+                                    ? "border-rose-600 bg-rose-600 text-white"
+                                    : "border-slate-200 bg-white text-slate-700 hover:border-slate-400 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200"
+                                }`}
+                              >
+                                {selected ? "✕ " : ""}{company}
+                              </button>
+                              <button
+                                type="button"
+                                title={`Delete ${company}`}
+                                onClick={() => removeShortlistCompany(company)}
+                                className={`rounded-r-lg border border-l-0 px-1.5 py-1 text-[11px] font-bold cursor-pointer ${
+                                  selected
+                                    ? "border-rose-600 bg-rose-700 text-white/90 hover:bg-rose-800"
+                                    : "border-slate-200 bg-white text-slate-400 hover:text-rose-600 dark:border-slate-700 dark:bg-slate-950"
+                                }`}
+                              >
+                                ✕
+                              </button>
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  ))}
+                </div>
+                <div className="mt-3 flex flex-col gap-2 border-t border-indigo-100 pt-3 sm:flex-row dark:border-indigo-900/60">
+                  <div className="flex flex-1 gap-2">
+                    <input
+                      type="text"
+                      value={customCompany}
+                      onChange={(event) => setCustomCompany(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          event.preventDefault();
+                          addCustomCompany();
+                        }
+                      }}
+                      placeholder="Add a company, e.g. Zoho"
+                      className="input-field flex-1 py-2 text-xs"
+                    />
+                    <button
+                      type="button"
+                      onClick={addCustomCompany}
+                      className="rounded-lg border border-violet-200 bg-violet-100 px-3 py-2 text-xs font-bold text-violet-800 transition-colors hover:bg-violet-200 dark:border-violet-800 dark:bg-violet-950/50 dark:text-violet-300 dark:hover:bg-violet-950 cursor-pointer"
+                    >
+                      + Custom
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Bottom row: filters and sort options */}
             <div className="grid grid-cols-1 gap-3 border-t border-slate-100/60 pt-3 dark:border-slate-800/40 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-9">
               {/* Filter by City */}
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <label className="text-xs font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
                   Location
                 </label>
                 <select
-                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer truncate"
+                  className="input-field py-1.5 text-xs font-bold bg-white text-slate-900 dark:bg-slate-950 dark:text-white border border-slate-300 dark:border-slate-700 cursor-pointer truncate"
                   value={filterCity}
                   onChange={(e) => setFilterCity(e.target.value)}
                 >
@@ -502,30 +692,41 @@ export default function JobsDashboardPage() {
 
               {/* Filter by Company */}
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <label className="text-xs font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
                   Company
                 </label>
                 <select
-                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer truncate"
+                  className="input-field py-1.5 text-xs font-bold bg-white text-slate-900 dark:bg-slate-950 dark:text-white border border-slate-300 dark:border-slate-700 cursor-pointer truncate"
                   value={filterCompany}
                   onChange={(e) => setFilterCompany(e.target.value)}
                 >
                   <option value="all">All Companies</option>
-                  {uniqueCompanies.map((company) => (
+                  {catalogCompanies.length > 0 && (
+                    <optgroup label="Company list">
+                      {catalogCompanies.map((company) => (
+                        <option key={company} value={company}>
+                          {company}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  <optgroup label="Companies in current results">
+                  {uniqueCompanies.filter((company) => !listedTopCompanies.has(company.toLowerCase())).map((company) => (
                     <option key={company} value={company}>
                       {company}
                     </option>
                   ))}
+                  </optgroup>
                 </select>
               </div>
 
               {/* Easy Apply */}
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <label className="text-xs font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
                   Easy Apply
                 </label>
                 <select
-                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  className="input-field py-1.5 text-xs font-bold bg-white text-slate-900 dark:bg-slate-950 dark:text-white border border-slate-300 dark:border-slate-700 cursor-pointer"
                   value={filterEasyApply}
                   onChange={(e) => setFilterEasyApply(e.target.value)}
                 >
@@ -536,11 +737,11 @@ export default function JobsDashboardPage() {
 
               {/* Workplace Type */}
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <label className="text-xs font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
                   Workplace
                 </label>
                 <select
-                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  className="input-field py-1.5 text-xs font-bold bg-white text-slate-900 dark:bg-slate-950 dark:text-white border border-slate-300 dark:border-slate-700 cursor-pointer"
                   value={filterWorkplace}
                   onChange={(e) => setFilterWorkplace(e.target.value)}
                 >
@@ -553,11 +754,11 @@ export default function JobsDashboardPage() {
 
               {/* Job Type */}
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <label className="text-xs font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
                   Job Type
                 </label>
                 <select
-                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  className="input-field py-1.5 text-xs font-bold bg-white text-slate-900 dark:bg-slate-950 dark:text-white border border-slate-300 dark:border-slate-700 cursor-pointer"
                   value={filterJobType}
                   onChange={(e) => setFilterJobType(e.target.value)}
                 >
@@ -572,11 +773,11 @@ export default function JobsDashboardPage() {
 
               {/* Experience Level */}
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <label className="text-xs font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
                   Experience
                 </label>
                 <select
-                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  className="input-field py-1.5 text-xs font-bold bg-white text-slate-900 dark:bg-slate-950 dark:text-white border border-slate-300 dark:border-slate-700 cursor-pointer"
                   value={filterExperience}
                   onChange={(e) => setFilterExperience(e.target.value)}
                 >
@@ -589,11 +790,11 @@ export default function JobsDashboardPage() {
 
               {/* HR Contact Filter */}
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <label className="text-xs font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
                   HR Contact
                 </label>
                 <select
-                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  className="input-field py-1.5 text-xs font-bold bg-white text-slate-900 dark:bg-slate-950 dark:text-white border border-slate-300 dark:border-slate-700 cursor-pointer"
                   value={filterHrContact}
                   onChange={(e) => setFilterHrContact(e.target.value)}
                 >
@@ -605,11 +806,11 @@ export default function JobsDashboardPage() {
 
               {/* HR Role Category Filter */}
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <label className="text-xs font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
                   HR Role
                 </label>
                 <select
-                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  className="input-field py-1.5 text-xs font-bold bg-white text-slate-900 dark:bg-slate-950 dark:text-white border border-slate-300 dark:border-slate-700 cursor-pointer"
                   value={filterHrRole}
                   onChange={(e) => setFilterHrRole(e.target.value)}
                 >
@@ -624,11 +825,11 @@ export default function JobsDashboardPage() {
 
               {/* Sort by */}
               <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                <label className="text-xs font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
                   Sort by
                 </label>
                 <select
-                  className="input-field py-1.5 text-xs bg-white/40 dark:bg-slate-950/35 cursor-pointer"
+                  className="input-field py-1.5 text-xs font-bold bg-white text-slate-900 dark:bg-slate-950 dark:text-white border border-slate-300 dark:border-slate-700 cursor-pointer"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                 >

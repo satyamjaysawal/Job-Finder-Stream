@@ -3,8 +3,10 @@ import { useAppDispatch, useAppSelector } from "./store/hooks";
 
 import {
   clearToast,
+  pageFromHash,
   setBootstrapped,
   setDatabaseName,
+  setPage,
 } from "./store/slices/uiSlice";
 import { restoreSession } from "./store/slices/authSlice";
 import { fetchConfig } from "./store/slices/configSlice";
@@ -36,6 +38,20 @@ export default function App() {
       localStorage.setItem("job_portal_theme", theme);
     } catch (_) {}
   }, [theme]);
+
+  // Page <-> URL hash sync: reload / back / forward restores the same page.
+  useEffect(() => {
+    const onHashChange = () => dispatch(setPage(pageFromHash()));
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, [dispatch]);
+
+  useEffect(() => {
+    const target = page === "home" ? "#/" : `#/${page}`;
+    if (window.location.hash !== target) {
+      window.location.hash = target;
+    }
+  }, [page]);
 
   useEffect(() => {
     if (!toast) return;

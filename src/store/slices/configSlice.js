@@ -86,23 +86,27 @@ async function listMutate({
 
 export const addQuery = createAsyncThunk(
   "config/addQuery",
-  async (query, { dispatch, getState, rejectWithValue }) => {
-    const q = String(query || "").trim();
+  async (payload, { dispatch, getState, rejectWithValue }) => {
+    const isObject = payload && typeof payload === "object";
+    const q = String(isObject ? payload.query : payload || "").trim();
+    const group = isObject ? payload.group : undefined;
     if (!q) {
       const msg = "Enter a search query first.";
       notifyError(dispatch, msg);
       return rejectWithValue(msg);
     }
     const existing = getState().config.config.search_queries || [];
-    if (existing.includes(q)) {
+    if (existing.some((item) => String(item).toLowerCase() === q.toLowerCase())) {
       const msg = "Query already exists in config collection.";
       notifyError(dispatch, msg);
       return rejectWithValue(msg);
     }
+    const body = { query: q };
+    if (group) body.group = String(group);
     return listMutate({
       path: "/config/queries",
       method: "POST",
-      body: { query: q },
+      body,
       successMsg: "Query added to database.",
       failMsg: "Failed to add query.",
       dispatch,
@@ -148,6 +152,52 @@ export const removeQuery = createAsyncThunk(
     })
 );
 
+export const addQueryGroup = createAsyncThunk(
+  "config/addQueryGroup",
+  async (group, { dispatch, getState, rejectWithValue }) => {
+    const g = String(group || "").trim().toLowerCase();
+    if (!g) {
+      const msg = "Enter a department name first.";
+      notifyError(dispatch, msg);
+      return rejectWithValue(msg);
+    }
+    if (g === "developer" || g === "hr") {
+      const msg = `"${g}" is a built-in department.`;
+      notifyError(dispatch, msg);
+      return rejectWithValue(msg);
+    }
+    const existing = getState().config.config.custom_query_groups || [];
+    if (existing.some((item) => String(item).toLowerCase() === g)) {
+      const msg = "Department already exists in config collection.";
+      notifyError(dispatch, msg);
+      return rejectWithValue(msg);
+    }
+    return listMutate({
+      path: "/config/groups",
+      method: "POST",
+      body: { group: g },
+      successMsg: "Department added to database.",
+      failMsg: "Failed to add department.",
+      dispatch,
+      rejectWithValue,
+    });
+  }
+);
+
+export const removeQueryGroup = createAsyncThunk(
+  "config/removeQueryGroup",
+  async (group, { dispatch, rejectWithValue }) =>
+    listMutate({
+      path: "/config/groups",
+      method: "DELETE",
+      body: { group: String(group || "").trim() },
+      successMsg: "Department removed from database.",
+      failMsg: "Failed to remove department.",
+      dispatch,
+      rejectWithValue,
+    })
+);
+
 export const addCity = createAsyncThunk(
   "config/addCity",
   async (city, { dispatch, getState, rejectWithValue }) => {
@@ -158,7 +208,7 @@ export const addCity = createAsyncThunk(
       return rejectWithValue(msg);
     }
     const existing = getState().config.config.cities || [];
-    if (existing.includes(c)) {
+    if (existing.some((item) => String(item).toLowerCase() === c.toLowerCase())) {
       const msg = "City already exists in config collection.";
       notifyError(dispatch, msg);
       return rejectWithValue(msg);
@@ -222,7 +272,7 @@ export const addCountry = createAsyncThunk(
       return rejectWithValue(msg);
     }
     const existing = getState().config.config.countries || [];
-    if (existing.includes(c)) {
+    if (existing.some((item) => String(item).toLowerCase() === c.toLowerCase())) {
       const msg = "Country already exists in config collection.";
       notifyError(dispatch, msg);
       return rejectWithValue(msg);
@@ -276,6 +326,70 @@ export const removeCountry = createAsyncThunk(
     })
 );
 
+export const addCompany = createAsyncThunk(
+  "config/addCompany",
+  async (company, { dispatch, getState, rejectWithValue }) => {
+    const c = String(company || "").trim();
+    if (!c) {
+      const msg = "Enter a company first.";
+      notifyError(dispatch, msg);
+      return rejectWithValue(msg);
+    }
+    const existing = getState().config.config.top_companies || [];
+    if (existing.some((item) => String(item).toLowerCase() === c.toLowerCase())) {
+      const msg = "Company already exists in config collection.";
+      notifyError(dispatch, msg);
+      return rejectWithValue(msg);
+    }
+    return listMutate({
+      path: "/config/companies",
+      method: "POST",
+      body: { company: c },
+      successMsg: "Company added to database.",
+      failMsg: "Failed to add company.",
+      dispatch,
+      rejectWithValue,
+    });
+  }
+);
+
+export const editCompany = createAsyncThunk(
+  "config/editCompany",
+  async ({ oldValue, newValue }, { dispatch, getState, rejectWithValue }) => {
+    const old_value = String(oldValue || "").trim();
+    const new_value = String(newValue || "").trim();
+    if (!old_value || !new_value) {
+      const msg = "Old and new company values are required.";
+      notifyError(dispatch, msg);
+      return rejectWithValue(msg);
+    }
+    if (old_value === new_value) return getState().config.config;
+    return listMutate({
+      path: "/config/companies",
+      method: "PUT",
+      body: { old_value, new_value },
+      successMsg: "Company updated in database.",
+      failMsg: "Failed to edit company.",
+      dispatch,
+      rejectWithValue,
+    });
+  }
+);
+
+export const removeCompany = createAsyncThunk(
+  "config/removeCompany",
+  async (company, { dispatch, rejectWithValue }) =>
+    listMutate({
+      path: "/config/companies",
+      method: "DELETE",
+      body: { company },
+      successMsg: "Company removed from database.",
+      failMsg: "Failed to remove company.",
+      dispatch,
+      rejectWithValue,
+    })
+);
+
 const applyConfig = (state, action) => {
   if (action.payload) {
     state.config = { ...EMPTY_CONFIG, ...action.payload };
@@ -305,12 +419,17 @@ const configSlice = createSlice({
       .addCase(addQuery.fulfilled, applyConfig)
       .addCase(editQuery.fulfilled, applyConfig)
       .addCase(removeQuery.fulfilled, applyConfig)
+      .addCase(addQueryGroup.fulfilled, applyConfig)
+      .addCase(removeQueryGroup.fulfilled, applyConfig)
       .addCase(addCity.fulfilled, applyConfig)
       .addCase(editCity.fulfilled, applyConfig)
       .addCase(removeCity.fulfilled, applyConfig)
       .addCase(addCountry.fulfilled, applyConfig)
       .addCase(editCountry.fulfilled, applyConfig)
-      .addCase(removeCountry.fulfilled, applyConfig);
+      .addCase(removeCountry.fulfilled, applyConfig)
+      .addCase(addCompany.fulfilled, applyConfig)
+      .addCase(editCompany.fulfilled, applyConfig)
+      .addCase(removeCompany.fulfilled, applyConfig);
   },
 });
 
