@@ -660,7 +660,7 @@ export default function LiveStreamControls({ activeSession, onStartStream, onTog
     (searchQueries.length > 0 || cities.length > 0 || countries.length > 0 || companies.length > 0);
 
   return (
-    <div className="panel relative overflow-x-auto p-5 max-h-[calc(100vh-140px)] overflow-y-auto scrollbar-thin">
+    <div className="live-controls-panel panel relative overflow-x-auto p-5 max-h-[calc(100vh-140px)] overflow-y-auto scrollbar-thin">
       {onToggleSidebar && (
         <button
           type="button"

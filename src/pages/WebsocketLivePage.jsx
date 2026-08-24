@@ -384,7 +384,7 @@ export default function WebsocketLivePage() {
       </div>
 
       {/* Main Console Layout (Desktop: Split Panel Layout with Left/Right Sliding Sidebar Drawer) */}
-      <div className="hidden lg:flex relative min-h-0 flex-1 gap-4 xl:gap-6 items-stretch transition-all duration-300">
+      <div className="live-console-layout hidden lg:flex relative min-h-0 flex-1 gap-4 xl:gap-6 items-stretch transition-all duration-300">
         {/* Left Column: Stream controls sidebar slider */}
         <div
           style={showSidebar ? { width: `${sidebarWidth}px` } : undefined}
@@ -430,7 +430,7 @@ export default function WebsocketLivePage() {
         )}
 
         {/* Right Column: Console terminal & real-time jobs feed */}
-        <div className="flex-1 min-w-0 flex flex-col gap-6 transition-all duration-300 ease-in-out">
+        <div className="live-console-results flex-1 min-w-0 flex flex-col gap-6 transition-all duration-300 ease-in-out">
           {showLogs && (
             <div className="animate-[fade-up_0.3s_cubic-bezier(0.16,1,0.3,1)_forwards]">
               <LogsTerminal logs={logs} />

@@ -41,7 +41,7 @@ export default function LiveJobsFeed({ streamedJobs, dbMeta, sessionSaved = 0, c
     meta.session_saved != null ? meta.session_saved : sessionSaved;
 
   return (
-    <div className="panel flex h-full min-h-[50vh] flex-1 flex-col p-5">
+    <div className="live-feed-panel panel flex h-full min-h-[50vh] flex-1 flex-col p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3.5 dark:border-slate-800 select-none">
         <div className="flex items-center gap-2.5">
           <h3 className="text-base font-black uppercase tracking-wider text-slate-900 dark:text-white">

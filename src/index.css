@@ -198,6 +198,51 @@
     @apply border-slate-300 bg-white text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-white;
   }
 
+  /* Keep the desktop console inside the first viewport. Long-running
+     content scrolls within its panel instead of pushing the page below fold.
+     Mobile keeps the normal document flow and tabbed layout. */
+  @media (min-width: 1024px) {
+    .live-page {
+      min-height: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .live-page > .workspace-hero {
+      margin-bottom: 1rem;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .live-page > .workspace-hero .page-title {
+      font-size: 1.75rem;
+      line-height: 1.15;
+    }
+
+    .live-console-layout {
+      height: clamp(30rem, calc(100dvh - 18rem), 52rem);
+      flex: none;
+      min-height: 0;
+    }
+
+    .live-console-layout > div,
+    .live-console-results,
+    .live-controls-panel,
+    .live-feed-panel {
+      min-height: 0;
+    }
+
+    .live-controls-panel {
+      max-height: none;
+      height: 100%;
+      flex: 1 1 auto;
+    }
+
+    .live-feed-panel {
+      min-height: 0;
+    }
+  }
+
   .page-kicker {
     @apply text-[11px] font-extrabold uppercase tracking-[0.25em] text-indigo-700 dark:text-indigo-400;
   }
