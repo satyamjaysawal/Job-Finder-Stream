@@ -9,11 +9,11 @@ export default function JobCard({ job }) {
       : displayValue(job.category, "Job");
 
   return (
-    <article className="panel group flex min-h-[210px] w-full flex-col justify-between p-5 border border-slate-200/90 bg-white/95 dark:border-slate-800 dark:bg-slate-900/95 shadow-md hover:shadow-xl hover:border-indigo-500/50 dark:hover:border-indigo-400/50 transition-all duration-300 hover:-translate-y-1 rounded-2xl">
+    <article className={`job-card ${job.saved === true || job.saved === false ? "job-card-with-status" : ""} panel group flex min-h-[210px] w-full flex-col justify-between p-5 border border-slate-200/90 bg-white/95 dark:border-slate-800 dark:bg-slate-900/95 shadow-md hover:shadow-xl hover:border-indigo-500/50 dark:hover:border-indigo-400/50 transition-all duration-300 hover:-translate-y-1 rounded-2xl`}>
       <div>
         {/* Top badges bar */}
         <div className="mb-3.5 flex flex-col gap-2 select-none">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="job-card-top-row flex flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap gap-1.5">
               <span className="px-2.5 py-0.5 rounded-full bg-indigo-600 text-white font-black text-[10px] uppercase tracking-wider shadow-xs">
                 {categoryLabel}

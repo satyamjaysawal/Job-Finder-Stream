@@ -489,6 +489,16 @@
     font-size: .5625rem;
   }
 
+  /* The feed adds a Saved/Not Saved badge at the card's top-right. Reserve
+     that space so the time chip remains visible instead of sitting underneath. */
+  .job-card-with-status .job-card-top-row {
+    padding-right: 3.75rem;
+  }
+
+  .job-card-with-status .job-card-top-row > span {
+    white-space: nowrap;
+  }
+
   /* Keep the large-selection confirmation centered in the desktop viewport,
      even when it is rendered inside a scrollable panel. */
   .large-selection-modal {
