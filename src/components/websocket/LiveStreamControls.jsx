@@ -1612,8 +1612,8 @@ export default function LiveStreamControls({ activeSession, onStartStream, onSto
       </form>
 
       {largeSelectionConfirm && (
-        <div className="fixed inset-0 z-[4000] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-[fade-in_0.2s_ease-out]">
-          <div className="w-full max-w-md overflow-hidden rounded-2xl border border-slate-200/50 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-950 p-6 animate-[scale-up_0.2s_cubic-bezier(0.16,1,0.3,1)]">
+        <div className="large-selection-modal fixed inset-0 z-[4000] grid h-dvh w-screen place-items-center overflow-y-auto bg-slate-900/60 p-4 backdrop-blur-md animate-[fade-in_0.2s_ease-out]">
+          <div className="large-selection-dialog w-full max-w-md overflow-hidden rounded-2xl border border-slate-200/50 bg-white p-5 shadow-xl dark:border-slate-800 dark:bg-slate-950 sm:p-6 animate-[scale-up_0.2s_cubic-bezier(0.16,1,0.3,1)]">
             <div className="flex items-start gap-4">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">

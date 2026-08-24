@@ -276,6 +276,20 @@
     letter-spacing: .08em;
   }
 
+  /* Keep the large-selection confirmation centered in the desktop viewport,
+     even when it is rendered inside a scrollable panel. */
+  .large-selection-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 4000;
+    place-items: center;
+  }
+
+  .large-selection-dialog {
+    max-height: min(90dvh, 38rem);
+    overflow-y: auto;
+  }
+
   .dashboard-compact .scraper-config-grid p {
     font-size: .5625rem;
     line-height: 1.3;
