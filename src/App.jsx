@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "./store/hooks";
 
 import {
   clearToast,
-  pageFromHash,
+  pageFromLocation,
   setBootstrapped,
   setDatabaseName,
   setPage,
@@ -39,17 +39,17 @@ export default function App() {
     } catch (_) {}
   }, [theme]);
 
-  // Page <-> URL hash sync: reload / back / forward restores the same page.
+  // Page <-> clean URL sync: reload / back / forward restores the same page.
   useEffect(() => {
-    const onHashChange = () => dispatch(setPage(pageFromHash()));
-    window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
+    const onLocationChange = () => dispatch(setPage(pageFromLocation()));
+    window.addEventListener("popstate", onLocationChange);
+    return () => window.removeEventListener("popstate", onLocationChange);
   }, [dispatch]);
 
   useEffect(() => {
-    const target = page === "home" ? "#/" : `#/${page}`;
-    if (window.location.hash !== target) {
-      window.location.hash = target;
+    const target = page === "home" ? "/" : `/${page}`;
+    if (window.location.pathname !== target) {
+      window.history.pushState({}, "", target);
     }
   }, [page]);
 

@@ -10,10 +10,10 @@ function getInitialTheme() {
 
 export const VALID_PAGES = ["home", "dashboard", "websocket-live", "users"];
 
-/** Derive the current page from `location.hash` (e.g. `#/dashboard`). */
-export function pageFromHash() {
+/** Derive the current page from the clean pathname. */
+export function pageFromLocation() {
   try {
-    const raw = window.location.hash.replace(/^#\/?/, "");
+    const raw = window.location.pathname.replace(/^\/+|\/+$/g, "");
     return VALID_PAGES.includes(raw) ? raw : "home";
   } catch (_) {
     return "home";
@@ -45,7 +45,7 @@ const initialState = {
   backendOnline: false,
   bootstrapped: false,
   // Restore the same page after a browser reload via the URL hash.
-  page: pageFromHash(),
+  page: pageFromLocation(),
   databaseName: "MongoDB",
   browseCompanies: readBrowseCompanies(),
 };
